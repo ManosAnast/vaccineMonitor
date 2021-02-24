@@ -11,7 +11,7 @@ typedef struct node{
     KeyType Id;
     struct node ** Next;
 }LinkedList;
-void LLInit(LinkedList *);
+LinkedList * LLInit();
 void LLInsert(LinkedList * List, KeyType Key, int Level);
 void LLInsertHelper(LinkedList **, KeyType Key, int Level);
 void LLDelete(LinkedList *, KeyType Key);
@@ -26,5 +26,5 @@ typedef struct skiplist{
     int Level;
     LinkedList * Header;
 }SkipList;
-void SLInit(SkipList *);
+void SLInit(SkipList **);
 void SLInsert(KeyType Key);
