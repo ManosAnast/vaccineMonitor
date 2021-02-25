@@ -1,4 +1,4 @@
-# include "skiplist.h"
+# include "Interface.h"
 
 int Level;
 
@@ -45,9 +45,22 @@ int main(int argc, char *argv[])
     // fclose(fp);
 
     //Level is log of the number of entries
-    Size=7;
+    Size=10;
     Level=Log(Size); 
     SkipList * slist=SLInit(0);
+
+    HTCreate(Size);
+
+    // HTInsert(7, "Testopoulos", "Greece", 27, "SARS-COV2", true);
+    // HTInsert(1, "Testopoulos", "Greece", 21, "SARS-COV2", true);
+    // HTInsert(3, "Testopoulos", "Greece", 23, "SARS-COV2", true);
+    // HTInsert(2, "Testopoulos", "Greece", 22, "SARS-COV2", true);
+    // HTInsert(5, "Testopoulos", "Greece", 25, "SARS-COV2", true);
+    // HTInsert(4, "Testopoulos", "Greece", 24, "SARS-COV2", true);
+    // HTInsert(6, "Testopoulos", "Greece", 26, "SARS-COV2", true);
+
+    FILE * fp=fopen("testfile.txt", "r");
+    Insert(fp);
 
     LinkedList * List=slist->Header;
     LLInsert(List, 7, 0);
@@ -56,7 +69,9 @@ int main(int argc, char *argv[])
     LLInsert(List, 2, 0);
     LLInsert(List, 5, 0);
     LLInsert(List, 4, 0);
+    LLInsert(List, 6, 0);
     SLInsert(slist);
+
     
     return 0;
 }
