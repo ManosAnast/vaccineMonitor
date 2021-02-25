@@ -35,6 +35,7 @@ void SLInsertHelper(SkipList ** Slist)
             }
             LTemp=LTemp->Next[0];
         }
+        LList->Next[CurrLevel]=LTemp;
         CurrLevel += 1;
         LTemp=(*Slist)->Header;
     }
