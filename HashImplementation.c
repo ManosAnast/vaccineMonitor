@@ -61,6 +61,7 @@ void HTPrint()
     for (int i = 0; i < M; i++){
         Citizens * Temp = Table[i];
         printf("- %d %s %s %d %s %d\n",Temp->citizenId,Temp->Name,Temp->Country,Temp->Age,Temp->Virus,Temp->Vaccinated);
+        Temp=Temp->Next;
         while (Temp != NULL ){
             printf("- %d %s %s %d %s %d\n",Temp->citizenId,Temp->Name,Temp->Country,Temp->Age,Temp->Virus,Temp->Vaccinated);
             Temp=Temp->Next;

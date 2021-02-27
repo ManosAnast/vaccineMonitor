@@ -25,8 +25,8 @@ void SLInsertHelper(SkipList ** Slist)
     srand(time(NULL));   // Initialize for "toss a coin" operation.
     
     int r = rand();
-    int CurrLevel=STemp->CurrLevel;
-    while (CurrLevel<= Level){
+    int CurrLevel=1;
+    while (CurrLevel < Level){
         while (LTemp != NULL)
         {
             if (rand() % 2){
@@ -35,7 +35,7 @@ void SLInsertHelper(SkipList ** Slist)
             }
             LTemp=LTemp->Next[0];
         }
-        LList->Next[CurrLevel]=LTemp;
+        LList->Next[CurrLevel]=NULL;
         CurrLevel += 1;
         LTemp=(*Slist)->Header;
     }
