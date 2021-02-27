@@ -88,10 +88,12 @@ void Insert(FILE * fp)
         }
 
         /* After the citizen has been inserted at the hash, insert it to linked list. */
-        LLInsert(List, atoi(Array[index-6]), 0);
+        LLInsert(List, atoi(Array[0]), 0);
         
     }
-    // SLInsert(slist);
+    SLInsert(slist); 
 
+    LLPrint(List);
+    
     return;
 }
