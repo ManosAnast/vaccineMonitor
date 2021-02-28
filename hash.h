@@ -4,7 +4,7 @@
 # include <stdbool.h>
 # include <time.h>
 
-extern int Level;
+extern int Level,BloomNum;
 
 typedef struct hash{
     int citizenId;

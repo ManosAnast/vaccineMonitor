@@ -19,6 +19,12 @@ typedef struct bloomfilter{
 bloom bloomInit(int NumofBits);
 
 
-void bloomSetBit(bloom * bloom, int Num);
+void bloomSetBit(bloom * bloom, char * Id);
 
 int bloomBitExist(bloom * bloom, int Num);
+
+unsigned long djb2(unsigned char *str);
+
+unsigned long sdbm(unsigned char *str);
+
+unsigned long hash_i(unsigned char *str, unsigned int i);
