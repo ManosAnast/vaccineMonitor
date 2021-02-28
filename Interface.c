@@ -1,4 +1,4 @@
-# include "skiplist.h"
+# include "Interface.h"
 
 unsigned int Log(unsigned int n) 
 { 
@@ -13,24 +13,12 @@ void Nothing()
 void Insert(FILE * fp)
 {
     int ch,Size=0,Bloom;
-    // // calculate the number of entrenches that we get from the file in order to take the size that we need for the hash table
-    // fp=fopen(File , "r");   
-    // while(1) { 
-
-    //     ch = getc(fp);
-    //     if( feof(fp) ) { 
-    //         break ;
-    //     }
-    //     if(ch == '\n'){  //Finds how many students are added.
-    //         Size+=1;
-    //     }
-    // }
-    // fclose(fp);
 
     //Level is log of the number of entries
     Size=10;
     Level=Log(Size); 
     SkipList * slist=SLInit(0);
+    Virus * Vlist=VirusInit();
 
     HTCreate(Size);
 
@@ -51,9 +39,6 @@ void Insert(FILE * fp)
     while (1){
         int i=0;
         index=0;
-        if (atoi(Array[0])==2){
-            Nothing();
-        }
         while ((ch = getc(fp)) != EOF)
         {
             if(ch == '\n'){
@@ -82,18 +67,60 @@ void Insert(FILE * fp)
         /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
         if (!strcmp(Array[5],"NO")){
             HTInsert(atoi(Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], false /*, Nothing*/); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, (Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], false /*, Nothing*/); // give the arguments to the htinsert.
         }
         else if (!strcmp(Array[5],"YES")){
             HTInsert(atoi(Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], true /*, Date*/); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, (Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], true /*, Nothing*/); // give the arguments to the htinsert.
         }
 
-        /* After the citizen has been inserted at the hash, insert it to linked list. */
-        LLInsert(List, atoi(Array[0]), 0);
+        
         
     }
-    SLInsert(slist); 
+    // SLInsert(slist); 
 
-    LLPrint(List);
+    // LLPrint(List);
+
+    Nothing();
     
     return;
+}
+
+Virus * VirusInit()
+{
+    Virus * VList=(Virus *)calloc(1, sizeof(Virus));
+    VList->VirusName=(char *)calloc(2, sizeof(char));
+    strcpy(VList->VirusName,NULLstring); VList->Next=NULL;
+    return VList;
+}
+
+void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, int Age, char * VName, bool Vaccinated/*,Date*/)
+{
+    Virus * Temp=*VList;
+    int Id=atoi(CitizenId);
+    while (Temp->Next != NULL && strcmp(Temp->VirusName, VName)){
+        Temp=Temp->Next;
+    }
+    if (Temp->Next == NULL){
+        Virus *  NewNode=(Virus *)calloc(1, sizeof(Virus));
+        NewNode->VirusName=(char *)calloc(strlen(VName), sizeof(char));
+        strcpy(NewNode->VirusName, VName);
+        if (Vaccinated){
+            SkipList * slist=SLInit(0);
+            LinkedList * List=slist->Header;
+            LLInsert(List, Id, 0);
+            NewNode->vaccinated_persons=slist;
+            bloom filter=bloomInit(BloomNum);
+            bloomSetBit(&filter, CitizenId);
+            NewNode->filter=filter;
+        }
+        else{
+            SkipList * slist=SLInit(0);
+            LinkedList * List=slist->Header;
+            LLInsert(List, Id, 0);
+            NewNode->not_vaccinated_persons=slist;
+        }
+        Temp->Next=NewNode;
+    }
+    
 }
