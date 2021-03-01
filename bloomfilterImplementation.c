@@ -10,7 +10,7 @@ bloom bloomInit(int NumOfBits)
 void bloomSetBit(bloom * bloom, char * Id)
 {   
     int num1, num2, num3;
-    num1=djb2(Id); num2=sdbm(Id); num3=hash_i(Id, 3);
+    num1=djb2(Id)%(BloomNum*8); num2=sdbm(Id)%(BloomNum*8); num3=hash_i(Id, 3)%(BloomNum*8);
     if (bloomBitExist(bloom, num1) && bloomBitExist(bloom, num2) && bloomBitExist(bloom, num3)){// If the bits that we want to change are already 1 return
         return;
     }
