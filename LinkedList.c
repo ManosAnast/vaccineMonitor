@@ -39,12 +39,12 @@ void LLInsertHelper(LinkedList ** List, KeyType Key, int CurrLevel)
     return;
 }
 
-void LLPrint(LinkedList * List)
+void LLPrint(LinkedList * List, int Level)
 {
     LinkedList * Temp=List;
     while (Temp != NULL){
         printf("%d",Temp->Id);
-        Temp=Temp->Next[0];
+        Temp=Temp->Next[Level];
         if (Temp != NULL){
             printf(" -> ");
         }
