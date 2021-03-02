@@ -16,3 +16,5 @@ SkipList * SLInit(int);
 void SLInsert(SkipList * Slist);
 
 void SLInsertHelper(SkipList ** Slist);
+
+void SLPrint(SkipList * Slist);

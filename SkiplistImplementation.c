@@ -33,11 +33,23 @@ void SLInsertHelper(SkipList ** Slist)
                 LList->Next[CurrLevel]=LTemp;
                 LList=LTemp;
             }
-            LTemp=LTemp->Next[0];
+            LTemp=LTemp->Next[CurrLevel-1];
         }
         LList->Next[CurrLevel]=NULL;
         CurrLevel += 1;
         LTemp=(*Slist)->Header;
+    }
+    STemp->CurrLevel=CurrLevel;
+    return;
+}
+
+
+void SLPrint(SkipList * Slist)
+{
+    int MaxLevel=Slist->CurrLevel;
+    
+    for (int i = 0; i < MaxLevel; i++){
+        LLPrint(Slist->Header, i);
     }
     return;
 }
