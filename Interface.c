@@ -15,7 +15,7 @@ void Insert(FILE * fp)
     int ch,Size=0,Bloom;
 
     //Level is log of the number of entries
-    Size=10;
+    Size=12;
     Level=Log(Size); 
     SkipList * slist=SLInit(0);
     Virus * Vlist=VirusInit();
@@ -72,16 +72,12 @@ void Insert(FILE * fp)
         else if (!strcmp(Array[5],"YES")){
             HTInsert(atoi(Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], true /*, Date*/); // give the arguments to the htinsert.
             VirusInsert(&Vlist, (Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], true /*, Nothing*/); // give the arguments to the htinsert.
-        }
-
-        
-        
+        }  
     }
-    // SLInsert(slist); 
-
-    // LLPrint(List);
 
     Nothing();
+
+    VirusSkipList(&Vlist);
     
     return;
 }
@@ -101,7 +97,7 @@ void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, 
     while (Temp->Next != NULL && strcmp(Temp->VirusName, VName)){
         Temp=Temp->Next;
     }
-    if (Temp->Next == NULL){
+    if (Temp->Next == NULL && strcmp(Temp->VirusName, VName)){
         Virus *  NewNode=(Virus *)calloc(1, sizeof(Virus));
         NewNode->VirusName=(char *)calloc(strlen(VName), sizeof(char));
         strcpy(NewNode->VirusName, VName);
@@ -121,6 +117,58 @@ void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, 
             NewNode->not_vaccinated_persons=slist;
         }
         Temp->Next=NewNode;
+    }
+    else if ( !strcmp(Temp->VirusName, VName) ){
+        if (Vaccinated){
+            SkipList * slist=Temp->vaccinated_persons;
+            if (slist == NULL){
+                slist=SLInit(0);
+                LinkedList * List=slist->Header;
+                LLInsert(List, Id, 0);
+                Temp->vaccinated_persons=slist;
+                bloom filter=bloomInit(BloomNum);
+                bloomSetBit(&filter, CitizenId);
+                Temp->filter=filter;
+            }
+            else{
+                LinkedList * List=slist->Header;
+                LLInsert(List, Id, 0);
+                Temp->vaccinated_persons=slist;
+                bloomSetBit(&Temp->filter, CitizenId);
+            }
+        }
+        else{
+            SkipList * slist=Temp->not_vaccinated_persons;
+            if (slist == NULL){
+                slist=SLInit(0);
+                LinkedList * List=slist->Header;
+                LLInsert(List, Id, 0);
+                Temp->not_vaccinated_persons=slist;
+            }
+            else{
+                LinkedList * List=slist->Header;
+                LLInsert(List, Id, 0);
+                Temp->not_vaccinated_persons=slist;
+            }
+        }
+    }
+    
+}
+
+
+void VirusSkipList(Virus ** VList)
+{
+    Virus * Temp= *VList;
+    Temp=Temp->Next;
+    
+    while (Temp != NULL){
+        SLInsert(Temp->vaccinated_persons); 
+        SLInsert(Temp->not_vaccinated_persons);
+        printf("%s\nvaccinated_persons:\n",Temp->VirusName);
+        SLPrint(Temp->vaccinated_persons);
+        printf("\n\nnot_vaccinated_persons:\n");
+        SLPrint(Temp->not_vaccinated_persons); printf("\n\n");
+        Temp=Temp->Next;
     }
     
 }

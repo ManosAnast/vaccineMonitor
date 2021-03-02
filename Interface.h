@@ -20,3 +20,5 @@ void Insert(FILE * fp);
 Virus * VirusInit();
 
 void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, int Age, char * VName, bool Vaccinated/*,Date*/);
+
+void VirusSkipList(Virus ** Vlist);
