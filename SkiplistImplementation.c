@@ -44,6 +44,27 @@ void SLInsertHelper(SkipList ** Slist)
 }
 
 
+LinkedList * SLSearch(SkipList * Slist, KeyType Id)
+{
+    int MaxLevel=Slist->CurrLevel;
+    LinkedList * Temp=Slist->Header;
+
+    for (int i = MaxLevel-1; i >= 0; i--){
+        while (Temp->Next[i] != NULL && Temp->Id < Id){
+            Temp=Temp->Next[i];
+        }
+        if (Temp->Id == Id){
+            return Temp;
+        }
+        if (Temp->Next[i] == NULL && i == 0 || Temp->Id > Id){
+            return NULL;
+        }
+        
+    }
+    return NULL;
+}
+
+
 void SLPrint(SkipList * Slist)
 {
     int MaxLevel=Slist->CurrLevel;

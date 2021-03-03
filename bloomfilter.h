@@ -6,7 +6,7 @@
  * 
 */
 typedef struct bloomfilter{
-    int NumofBits;
+    int NumofBytes;
     char * bits;
 }bloom;
 
@@ -21,7 +21,7 @@ bloom bloomInit(int NumofBits);
 
 void bloomSetBit(bloom * bloom, char * Id);
 
-int bloomBitExist(bloom * bloom, int Num);
+int bloomBitExist(bloom * bloom, char * Id);
 
 unsigned long djb2(unsigned char *str);
 

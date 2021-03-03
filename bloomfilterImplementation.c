@@ -3,7 +3,7 @@
 bloom bloomInit(int NumOfBits)
 {
     bloom filter;
-    filter.NumofBits=NumOfBits; filter.bits=(char *)calloc(NumOfBits, sizeof(char));
+    filter.NumofBytes=NumOfBits; filter.bits=(char *)calloc(NumOfBits, sizeof(char));
     return filter;
 }
 
@@ -11,35 +11,43 @@ void bloomSetBit(bloom * bloom, char * Id)
 {   
     int num1, num2, num3;
     num1=djb2(Id)%(BloomNum*8); num2=sdbm(Id)%(BloomNum*8); num3=hash_i(Id, 3)%(BloomNum*8);
-    if (bloomBitExist(bloom, num1) && bloomBitExist(bloom, num2) && bloomBitExist(bloom, num3)){// If the bits that we want to change are already 1 return
-        return;
-    }
+    // if (bloomBitExist(bloom, Id)){// If the bits that we want to change are already 1 return
+    //     return;
+    // }
     /*Set the bit that djb2 returned*/
     int Byte=num1/8, x=1;
-    int N=num1 - 8*Byte - 1;
+    int N=num1 - 8*Byte;
     int Number=bloom->bits[Byte];
     Number ^= (-x ^ Number) & (1UL << N);
     bloom->bits[Byte]=Number;
     
     /*Set the bit that sdbm returned*/
-    Byte=num2/8; N=num2 - 8*Byte - 1; Number=bloom->bits[Byte];
+    Byte=num2/8; N=num2 - 8*Byte; Number=bloom->bits[Byte];
     Number ^= (-x ^ Number) & (1UL << N);
     bloom->bits[Byte]=Number;
     
     /*Set the bit that hash_i returned*/
-    Byte=num3/8; N=num3 - 8*Byte - 1; Number=bloom->bits[Byte];
+    Byte=num3/8; N=num3 - 8*Byte; Number=bloom->bits[Byte];
     Number ^= (-x ^ Number) & (1UL << N);
     bloom->bits[Byte]=Number;
     return;
 }
 
-int bloomBitExist(bloom * bloom, int Num)
+int bloomBitExist(bloom * bloom, char * Id)
 {
-    int Byte=Num/8;
-    int N=Num - 8*Byte - 1;
+    int num1, num2, num3;
+    num1=djb2(Id)%(BloomNum*8); num2=sdbm(Id)%(BloomNum*8); num3=hash_i(Id, 3)%(BloomNum*8);
+    int Byte=num1/8;
+    int N=num1 - 8*Byte;
     int Number=bloom->bits[Byte];
-    int bit=(Number >> N) & 1U;
-    return bit;
+    int bit1=(Number >> N) & 1U;
+    
+    Byte=num2/8; N=num2 - 8*Byte; Number=bloom->bits[Byte];
+    int bit2=(Number >> N) & 1U;
+    
+    Byte=num3/8; N=num3 - 8*Byte; Number=bloom->bits[Byte];
+    int bit3=(Number >> N) & 1U;
+    return (bit1 && bit2 && bit3);
 }
 
 /*

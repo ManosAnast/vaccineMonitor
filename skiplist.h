@@ -18,3 +18,5 @@ void SLInsert(SkipList * Slist);
 void SLInsertHelper(SkipList ** Slist);
 
 void SLPrint(SkipList * Slist);
+
+LinkedList * SLSearch(SkipList * Slist, KeyType Id);
