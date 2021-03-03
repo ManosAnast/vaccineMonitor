@@ -10,6 +10,26 @@ void Nothing()
     return;
 }
 
+char ** BreakString(char * str, const char * s, int Num)
+{
+    int index=0;
+    char **Array;
+    Array=(char**)malloc(Num*sizeof(char *)); // make an arry of strings with 30 characters each string.
+    for(int i=0 ; i< Num ; i++){
+        Array[i]=(char*)malloc(50*sizeof(char));
+    }
+
+    char * token = strtok(str, s);   //we use strtok in order to break the string into the different data in order to give it to the HTInsert
+    //now we will use an array of strings that keeps all the variables that we need for the hash table
+    while (token != NULL)   //this loop gives the variables that we need to the array from the token(strtok)
+    {
+        strcpy(Array[index],token);
+        token = strtok(NULL, s);
+        index++;
+    }
+    return Array;
+}
+
 void Insert(FILE * fp)
 {
     int ch,Size=0,Bloom;
@@ -28,11 +48,7 @@ void Insert(FILE * fp)
     char *str;
     str=(char *)calloc(150,sizeof(char));
     
-    char **Array;
-    Array=(char**)malloc(8*sizeof(char *)); // make an arry of strings with 30 characters each string.
-    for(int i=0 ; i< 8 ; i++){
-        Array[i]=(char*)malloc(50*sizeof(char));
-    }
+
 
     const char * s=" ";
     int index=0;
@@ -51,33 +67,36 @@ void Insert(FILE * fp)
         }
         str[i]='\0';
         
-        char * token = strtok(str, s);   //we use strtok in order to break the string into the different data in order to give it to the HTInsert
-        //now we will use an array of strings that keeps all the variables that we need for the hash table
-        while (token != NULL)   //this loop gives the variables that we need to the array from the token(strtok)
-        {
-            strcpy(Array[index],token);
-            token = strtok(NULL, s);
-            index++;
-        }
+        
    
         if( feof(fp) ) { 
             break ;
         }
 
+        
+        char **Array=BreakString(str, s, 8);
+
+        if (atoi(Array[0]) == 21)
+        {
+            Nothing();
+        }
+        
         /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
         if (!strcmp(Array[5],"NO")){
-            HTInsert(atoi(Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], false /*, Nothing*/); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, (Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], false /*, Nothing*/); // give the arguments to the htinsert.
+            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], false /*, Nothing*/); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[0], Array[1], Array[2], atoi(Array[3]), Array[4], false /*, Nothing*/); // give the arguments to the htinsert.
         }
         else if (!strcmp(Array[5],"YES")){
-            HTInsert(atoi(Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], true /*, Date*/); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, (Array[index-6]), Array[index-5], Array[index-4], atoi(Array[index-3]), Array[index-2], true /*, Nothing*/); // give the arguments to the htinsert.
+            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], true /*, Date*/); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[0], Array[1], Array[2], atoi(Array[3]), Array[4], true/*, Nothing*/); // give the arguments to the htinsert.
         }  
     }
 
     Nothing();
 
     VirusSkipList(&Vlist);
+
+    TTY(Vlist);
     
     return;
 }
@@ -134,7 +153,9 @@ void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, 
                 LinkedList * List=slist->Header;
                 LLInsert(List, Id, 0);
                 Temp->vaccinated_persons=slist;
-                bloomSetBit(&Temp->filter, CitizenId);
+                bloom filter=Temp->filter;
+                bloomSetBit(&filter, CitizenId);
+                Temp->filter=filter;
             }
         }
         else{
@@ -169,6 +190,70 @@ void VirusSkipList(Virus ** VList)
         printf("\n\nnot_vaccinated_persons:\n");
         SLPrint(Temp->not_vaccinated_persons); printf("\n\n");
         Temp=Temp->Next;
+    }
+    
+}
+
+
+Virus * VirusFind(Virus * Vlist, char * VirusName)
+{
+    Virus * Temp= Vlist;
+    while (Temp != NULL && strcmp(Temp->VirusName, VirusName))
+    {
+        Temp=Temp->Next;
+    }
+    return Temp;
+}
+
+
+void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
+{
+    Virus * Temp = VirusFind(Vlist, VirusName);
+    bloom filter= Temp->filter;
+    int exist=bloomBitExist(&filter, Id);
+    if (exist)
+    {
+        printf("MAYBE\n");
+    }
+    else{
+        printf("NOT VACCINATED\n");
+    }
+    return;
+}
+
+void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName)
+{
+    Virus * Temp = VirusFind(Vlist, VirusName);
+    LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Id));
+    if (exist != NULL)
+    {
+        printf("VACCINATED ON\n");
+    }
+    else{
+        printf("NOT VACCINATED\n");
+    }
+    return;
+}
+
+void TTY(Virus * Vlist)
+{
+    while (1){
+        char Answer[200];
+        printf("Give a command\n");
+        fgets(Answer,90,stdin);
+        if(( strlen(Answer)>0 ) && (Answer[strlen(Answer) - 1])=='\n'){
+            Answer[strlen(Answer)-1]='\0';
+        }
+        if(!strcmp(Answer, "exit")){
+            break;
+        }
+        char ** Array=BreakString(Answer, " ", 3);
+        if (!strcmp(Array[0], "/vaccineStatusBloom")){
+            VaccinateStatusBloom(Vlist, Array[1], Array[2]);
+        }
+        else if (!strcmp(Array[0], "/vaccineStatus")){
+            VaccinateStatus(Vlist, Array[1], Array[2]);
+        }
     }
     
 }
