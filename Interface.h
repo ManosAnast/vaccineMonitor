@@ -30,3 +30,5 @@ void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
 void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName);
 
 void TTY(Virus * Vlist);
+
+void ListNonVaccinated(Virus * Vlist, char * VName);

@@ -28,3 +28,5 @@ void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool V
 
 // Prints all the nodes of a Table.
 void HTPrint();
+
+Citizens * HTSearch(int Item);

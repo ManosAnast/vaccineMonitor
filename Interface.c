@@ -21,7 +21,7 @@ char ** BreakString(char * str, const char * s, int Num)
 
     char * token = strtok(str, s);   //we use strtok in order to break the string into the different data in order to give it to the HTInsert
     //now we will use an array of strings that keeps all the variables that we need for the hash table
-    while (token != NULL)   //this loop gives the variables that we need to the array from the token(strtok)
+    while (token != NULL && index < Num)   //this loop gives the variables that we need to the array from the token(strtok)
     {
         strcpy(Array[index],token);
         token = strtok(NULL, s);
@@ -247,13 +247,82 @@ void TTY(Virus * Vlist)
         if(!strcmp(Answer, "exit")){
             break;
         }
-        char ** Array=BreakString(Answer, " ", 3);
-        if (!strcmp(Array[0], "/vaccineStatusBloom")){
+        char ** Array=BreakString(Answer, " ", 7);
+        if (!strcmp(Array[0], "vaccineStatusBloom")){
             VaccinateStatusBloom(Vlist, Array[1], Array[2]);
         }
-        else if (!strcmp(Array[0], "/vaccineStatus")){
-            VaccinateStatus(Vlist, Array[1], Array[2]);
+        else if (!strcmp(Array[0], "vaccineStatus") && strcmp(Array[1], "")){
+            if(!strcmp(Array[2], "")){
+                Virus * Temp=Vlist;
+                Temp=Temp->Next;
+                while (Temp!=NULL){
+                    printf("%s ", Temp->VirusName);
+                    VaccinateStatus(Vlist, Array[1], Temp->VirusName);
+                    Temp=Temp->Next;
+                }
+            }
+            else{
+                VaccinateStatus(Vlist, Array[1], Array[2]);
+            }
         }
+        else if (!strcmp(Array[0], "list-nonVaccinated-Persons")){
+            ListNonVaccinated(Vlist, Array[1]);
+        }
+        else if (!strcmp(Array[0], "insertCitizenRecord")){
+            Virus * Temp = VirusFind(Vlist, Array[5]);
+            bloom filter= Temp->filter;
+            int exist=bloomBitExist(&filter, Array[1]);
+            if (exist)
+            {
+                Virus * Temp = VirusFind(Vlist, Array[5]);
+                LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Array[1]));
+                if (exist != NULL)
+                {
+                    printf("VACCINATED ON\n");
+                }
+                else{
+                    if (!strcmp(Array[6],"NO")){
+                        HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
+                        VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
+                    }
+                    else if (!strcmp(Array[6],"YES")){
+                        HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true /*, Date*/); // give the arguments to the htinsert.
+                        VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true/*, Nothing*/); // give the arguments to the htinsert.
+                    }  
+                }
+            }
+            else{
+                if (!strcmp(Array[6],"NO")){
+                    HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
+                    VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
+                }
+                else if (!strcmp(Array[6],"YES")){
+                    HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true /*, Date*/); // give the arguments to the htinsert.
+                    VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true/*, Nothing*/); // give the arguments to the htinsert.
+                }  
+            }
+        }
+        
+        printf("\n");
     }
-    
+}
+
+void ListNonVaccinated(Virus * Vlist, char * VName)
+{
+    Virus * Temp=Vlist->Next;
+    while (Temp->Next != NULL && strcmp(Temp->VirusName, VName)){
+        Temp=Temp->Next;
+    }
+    if(Temp == NULL){
+        printf("Didn't find any skiplist for %s\n",VName);
+        return;
+    }
+    LinkedList * List=Temp->not_vaccinated_persons->Header->Next[0];
+    Citizens * Person;
+    while (List != NULL){
+        Person=HTSearch(List->Id);
+        printf("%d %s %s %d\n",Person->citizenId, Person->Name, Person->Country, Person->Age);
+        List=List->Next[0];
+    }
+    return;
 }
