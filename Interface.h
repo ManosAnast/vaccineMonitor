@@ -21,7 +21,7 @@ void Insert(FILE * fp);
 
 Virus * VirusInit();
 
-void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, int Age, char * VName, bool Vaccinated/*,Date*/);
+void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr);
 
 void VirusSkipList(Virus ** Vlist);
 
@@ -32,3 +32,7 @@ void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName);
 void TTY(Virus * Vlist);
 
 void ListNonVaccinated(Virus * Vlist, char * VName);
+
+void InsertCitizenRecord(Virus * Vlist, char ** Array);
+
+void VaccinateNow(Virus * Vlist, char ** Array);

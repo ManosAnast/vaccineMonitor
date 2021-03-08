@@ -83,12 +83,12 @@ void Insert(FILE * fp)
         
         /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
         if (!strcmp(Array[5],"NO")){
-            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], false /*, Nothing*/); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[0], Array[1], Array[2], atoi(Array[3]), Array[4], false /*, Nothing*/); // give the arguments to the htinsert.
+            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], false, Array[6]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[0], Array[4], false , Array[6]); // give the arguments to the htinsert.
         }
         else if (!strcmp(Array[5],"YES")){
-            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], true /*, Date*/); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[0], Array[1], Array[2], atoi(Array[3]), Array[4], true/*, Nothing*/); // give the arguments to the htinsert.
+            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], true, Array[6]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[0], Array[4], true, Array[6]); // give the arguments to the htinsert.
         }  
     }
 
@@ -109,7 +109,7 @@ Virus * VirusInit()
     return VList;
 }
 
-void VirusInsert(Virus ** VList, char * CitizenId, char * Name, char * Country, int Age, char * VName, bool Vaccinated/*,Date*/)
+void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr)
 {
     Virus * Temp=*VList;
     int Id=atoi(CitizenId);
@@ -247,7 +247,7 @@ void TTY(Virus * Vlist)
         if(!strcmp(Answer, "exit")){
             break;
         }
-        char ** Array=BreakString(Answer, " ", 7);
+        char ** Array=BreakString(Answer, " ", 8);
         if (!strcmp(Array[0], "vaccineStatusBloom")){
             VaccinateStatusBloom(Vlist, Array[1], Array[2]);
         }
@@ -269,40 +269,18 @@ void TTY(Virus * Vlist)
             ListNonVaccinated(Vlist, Array[1]);
         }
         else if (!strcmp(Array[0], "insertCitizenRecord")){
-            Virus * Temp = VirusFind(Vlist, Array[5]);
-            bloom filter= Temp->filter;
-            int exist=bloomBitExist(&filter, Array[1]);
-            if (exist)
-            {
-                Virus * Temp = VirusFind(Vlist, Array[5]);
-                LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Array[1]));
-                if (exist != NULL)
-                {
-                    printf("VACCINATED ON\n");
-                }
-                else{
-                    if (!strcmp(Array[6],"NO")){
-                        HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
-                        VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
-                    }
-                    else if (!strcmp(Array[6],"YES")){
-                        HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true /*, Date*/); // give the arguments to the htinsert.
-                        VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true/*, Nothing*/); // give the arguments to the htinsert.
-                    }  
-                }
-            }
-            else{
-                if (!strcmp(Array[6],"NO")){
-                    HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
-                    VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false /*, Nothing*/); // give the arguments to the htinsert.
-                }
-                else if (!strcmp(Array[6],"YES")){
-                    HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true /*, Date*/); // give the arguments to the htinsert.
-                    VirusInsert(&Vlist, Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true/*, Nothing*/); // give the arguments to the htinsert.
-                }  
-            }
+            InsertCitizenRecord(Vlist, Array);
         }
-        
+        else if (!strcmp(Array[0], "vaccinateNow")){
+            VaccinateNow(Vlist, Array);
+        }
+        else if (!strcmp(Array[0], "populationStatus")){
+            
+        }
+        for (int i = 0; i < 8; i++){
+            free(Array[i]);
+        }
+        free(Array);
         printf("\n");
     }
 }
@@ -325,4 +303,57 @@ void ListNonVaccinated(Virus * Vlist, char * VName)
         List=List->Next[0];
     }
     return;
+}
+
+void InsertCitizenRecord(Virus * Vlist, char ** Array)
+{
+    Virus * Temp = VirusFind(Vlist, Array[5]);
+    bloom filter= Temp->filter;
+    int exist=bloomBitExist(&filter, Array[1]);
+    if (exist)
+    {
+        Virus * Temp = VirusFind(Vlist, Array[5]);
+        LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Array[1]));
+        if (exist != NULL)
+        {
+            printf("VACCINATED ON\n");
+        }
+        else{
+            if (!strcmp(Array[6],"NO")){
+                HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
+                VirusInsert(&Vlist, Array[1], Array[5], false, Array[7]); // give the arguments to the htinsert.
+            }
+            else if (!strcmp(Array[6],"YES")){
+                HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
+                VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
+            }  
+        }
+    }
+    else{
+        if (!strcmp(Array[6],"NO")){
+            HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[1], Array[5], false, Array[7]); // give the arguments to the htinsert.
+        }
+        else if (!strcmp(Array[6],"YES")){
+            HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
+        }  
+    }
+    return;
+}
+
+void VaccinateNow(Virus * Vlist, char ** Array)
+{
+    Virus * Temp = VirusFind(Vlist, Array[5]);
+    LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Array[1]));
+    if (exist != NULL)
+    {
+        printf("ERROR: CITIZEN %s ALREADY VACCINATED ON ", Array[1]);
+        Citizens * Rec=HTSearch(atoi(Array[1]));
+        PrintDate(Rec->Timing);
+    }
+    else{
+        VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
+        Citizens * Rec=HTSearch(atoi(Array[1])); Rec->Vaccinated=true; Rec->Timing=CreateDate("Today");
+    }
 }
