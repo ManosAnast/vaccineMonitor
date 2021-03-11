@@ -135,10 +135,10 @@ void TTY(Virus * Vlist, Country * CList)
             VaccinateNow(Vlist, Array);
         }
         else if (!strcmp(Array[0], "populationStatus")){
-            populationStatus(Vlist, CList, Array);
+            populationStatus(Vlist, CList, Array, false);
         }
         else if (!strcmp(Array[0], "popStatusByAge")){
-            popStatusByAge(Vlist, CList, Array);
+            populationStatus(Vlist, CList, Array, true);
         }
         
         // for (int i = 0; i < 8; i++){
@@ -256,9 +256,17 @@ void VaccinateNow(Virus * Vlist, char ** Array)
     }
 }
 
-void populationStatus(Virus * VList, Country * CList, char ** Array)
+void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age)
 {
     Virus * Temp=VList;
+    int * Cat;
+    if (Age){
+        Cat=(int *)calloc(4, sizeof(int));
+    }
+    else{
+        Cat=(int *)calloc(1, sizeof(int));
+    }
+    
 
     if (strcmp(Array[4], "")){
         while (Temp->Next!=NULL && strcmp(Temp->VirusName, Array[2])){
@@ -269,9 +277,9 @@ void populationStatus(Virus * VList, Country * CList, char ** Array)
             return;
         }
         SkipList *SList=Temp->vaccinated_persons;
-        int Num= CalculateVaccinated(SList, Array[1]);
-        Country * country=CountrySearch(CList, Array[1]);
-        printf("%s:%d %d \n",Array[1], Num, Num/country->Population * 100);
+        Cat = CalculateVaccinated(SList, Array[1], Age, Cat);
+        Country * country=CountrySearch(CList, Array[1]);        
+        PrintCat(country->CName, Cat, Age, country->Population);
         return;
     }
     while (Temp->Next!=NULL && strcmp(Temp->VirusName, Array[1])){
@@ -284,63 +292,65 @@ void populationStatus(Virus * VList, Country * CList, char ** Array)
     CList=CList->Next;
     while (CList != NULL){
         SkipList *SList=Temp->vaccinated_persons;
-        int Num= CalculateVaccinated(SList, CList->CName);
-        printf("%s:%d %d% \n", CList->CName, Num, Num/CList->Population * 100);
+        Cat = CalculateVaccinated(SList, CList->CName, Age, Cat);
+        PrintCat(CList->CName, Cat, Age, CList->Population);
         CList=CList->Next;
     }
     
     return;
 }
 
-int CalculateVaccinated(SkipList * SList, char * Country)
+int * CalculateVaccinated(SkipList * SList, char * Country, bool Age, int * Array)
 {
-    int Vaccinated=0;
     LinkedList * Temp=SList->Header;
     Citizens * Record;
     Temp=Temp->Next[0];
     while (Temp != NULL){
         Record=HTSearch(Temp->Id);
         if(!strcmp(Record->Country, Country)){ 
-            Vaccinated += (int)Record->Vaccinated;
+            if(Age){
+                InsertByAge(Array, Record);
+            }
+            else{
+                *Array += (int)Record->Vaccinated;
+            }
         }
         Temp=Temp->Next[0];
     }
-    return Vaccinated;
+    return Array;
 }
 
-void popStatusByAge(Virus * VList, Country * CList, char ** Array)
+void InsertByAge(int * Array, Citizens * Record)
 {
-    Virus * Temp=VList;
-
-    if (strcmp(Array[4], "")){
-        while (Temp->Next!=NULL && strcmp(Temp->VirusName, Array[2])){
-            Temp=Temp->Next;
-        }
-        if(Temp->Next == NULL && strcmp(Temp->VirusName, Array[2])){
-            printf("ERROR: Couldn't find the virus that you gave\n");
-            return;
-        }
-        SkipList *SList=Temp->vaccinated_persons;
-        int Num= CalculateVaccinated(SList, Array[1]);
-        Country * country=CountrySearch(CList, Array[1]);
-        printf("%s:%d %d \n",Array[1], Num, Num/country->Population * 100);
-        return;
+    if(Record->Age < 20){
+        Array[0] += (int)Record->Vaccinated;
     }
-    while (Temp->Next!=NULL && strcmp(Temp->VirusName, Array[1])){
-        Temp=Temp->Next;
+    else if (Record->Age >= 20 && Record->Age < 40){
+        Array[1] += (int)Record->Vaccinated;
     }
-    if(Temp->Next == NULL && strcmp(Temp->VirusName, Array[1])){
-        printf("ERROR: Couldn't find the virus that you gave\n");
-        return;
+    else if (Record->Age >= 40 && Record->Age < 60){
+        Array[2] += (int)Record->Vaccinated;
     }
-    CList=CList->Next;
-    while (CList != NULL){
-        SkipList *SList=Temp->vaccinated_persons;
-        int Num= CalculateVaccinated(SList, CList->CName);
-        printf("%s:%d %d% \n", CList->CName, Num, Num/CList->Population * 100);
-        CList=CList->Next;
+    else if (Record->Age >= 60){
+        Array[3] += (int)Record->Vaccinated;
     }
-    
     return;
 }
 
+void PrintCat(char * Country, int * Array, bool Age, int Population)
+{
+    if (Age){
+        printf("%s\n", Country);
+        printf("0-20 %d %d% \n", Array[0], Array[0]/Population * 100);
+        printf("20-40 %d %d% \n", Array[1], Array[1]/Population * 100);
+        printf("40-60 %d %d% \n", Array[2], Array[2]/Population * 100);
+        printf("60+ %d %d% \n", Array[3], Array[3]/Population * 100);
+        for (int i = 0; i < 4; i++){
+            Array[i]=0;
+        }
+        return;
+    }
+    printf("%s:%d %d% \n", Country, *Array, *Array/Population * 100);
+    *Array=0;
+    return;
+}

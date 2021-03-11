@@ -53,8 +53,12 @@ void VaccinateNow(Virus * Vlist, char ** Array);
 
 Virus * VirusFind(Virus * Vlist, char * VirusName);
 
-void populationStatus(Virus * VList, Country * CList, char ** Array);
+void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age);
 
-int CalculateVaccinated(SkipList * SList, char * Country);
+int * CalculateVaccinated(SkipList * SList, char * Country, bool Age, int * Array);
 
 void popStatusByAge(Virus * Vlist, Country * CList, char ** Array);
+
+void InsertByAge(int * Array, Citizens * Record);
+
+void PrintCat(char * Country, int * Array, bool Age, int Population);
