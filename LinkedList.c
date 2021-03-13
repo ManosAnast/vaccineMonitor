@@ -23,8 +23,8 @@ void LLInsertHelper(LinkedList ** List, KeyType Key, int CurrLevel)
         Temp=Temp->Next[CurrLevel];
     }
     /*Make a new node*/
-    NewNode=(LinkedList *)calloc(1,sizeof(LinkedList));
-    NewNode->Next=(LinkedList **) calloc(1, sizeof(LinkedList *));    
+    NewNode=(LinkedList *)calloc(1, sizeof(LinkedList));
+    NewNode->Next=(LinkedList **)calloc(Level, sizeof(LinkedList *));
     NewNode->Id=Key;
 
     /*Connect the new node to the correct position*/
@@ -50,5 +50,19 @@ void LLPrint(LinkedList * List, int Level)
         }
     }
     printf("\n");
+    return;
+}
+
+void LLDestroy(LinkedList ** List)
+{
+    LinkedList * Current=*List, *Next;
+    while (Current!= NULL){
+        Next=Current->Next[0];
+        // for (int i = 0; i < Level; i++){
+        free(Current->Next);
+        // }
+        free(Current);
+        Current=Next;
+    }
     return;
 }

@@ -14,13 +14,27 @@ Date * CreateDate(char * DateStr)
     }
     
     const char * s="-";
-    char **Array=BreakString(DateStr, s, 3);
+    char **Array;
+    Array=(char**)malloc(3*sizeof(char *)); // make an arry of strings with 30 characters each string.
+    for(int i=0 ; i< 3 ; i++){
+        Array[i]=(char*)malloc(50*sizeof(char));
+    }
+    BreakString(&Array, DateStr, s, 3);
     if (atoi(Array[0])<=30 && atoi(Array[0])>0 && atoi(Array[1])>0 && atoi(Array[1])<=12){
         Timing->Days=atoi(Array[0]); Timing->Month=atoi(Array[1]); Timing->Year=atoi(Array[2]);
+        for (int i = 0; i < 3; i++){
+            free(Array[i]);
+        }
+        free(Array);
         return Timing;
     }
     else{
-        printf("Wrong Date\n"); return NULL;
+        printf("Wrong Date\n"); 
+        for (int i = 0; i < 3; i++){
+            free(Array[i]);
+        }
+        free(Array);
+        return NULL;
     }
 }
 
@@ -43,9 +57,9 @@ Citizens * NewRecord(int Id, char * Name, char * Country, int Age, char * Virus,
 {
     Citizens * NewNode=(Citizens *)calloc(1, sizeof(Citizens));
     NewNode->citizenId=Id; NewNode->Age=Age; NewNode->Vaccinated=Vaccinated; NewNode->Next=NULL;
-    NewNode->Name=(char *)calloc(strlen(Name), sizeof(char)); strcpy(NewNode->Name, Name);
-    NewNode->Country=(char *)calloc(strlen(Country), sizeof(char)); strcpy(NewNode->Country, Country);
-    NewNode->Virus=(char *)calloc(strlen(Virus), sizeof(char)); strcpy(NewNode->Virus, Virus);
+    NewNode->Name=(char *)calloc(strlen(Name)+1, sizeof(char)); strcpy(NewNode->Name, Name);
+    NewNode->Country=(char *)calloc(strlen(Country)+1, sizeof(char)); strcpy(NewNode->Country, Country);
+    NewNode->Virus=(char *)calloc(strlen(Virus)+1, sizeof(char)); strcpy(NewNode->Virus, Virus);
     if (!Vaccinated){
         NewNode->Timing=NULL;  return NewNode;
     }
@@ -62,6 +76,9 @@ int Hash(int Item)
 void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
 {
     int i = Hash(Id);
+    if(!strcmp(DateStr, NULLstring)){
+        strcpy(DateStr, "Today");
+    }
     if(Table[i] == NULL){   //if the table that we want is null make it using the new function
         Table[i]=NewRecord(Id, Name, Country, Age, Virus, Vaccinated, DateStr);
         return;
@@ -81,11 +98,11 @@ void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool V
 Citizens * HTSearch(int Item)
 {
     Citizens * Temp = Table[Hash(Item)];
-    while (Temp != NULL && Temp->citizenId != Item ){
+    while (Temp->Next != NULL && Temp->citizenId != Item ){
         Temp=Temp->Next;
     }
-    if(Temp == NULL){
-        printf("Citizen %d does not exist\n",Item);
+    if(Temp->Next == NULL && Temp->citizenId != Item){
+        printf("Citizen %d does not exist\n",Item); return NULL;
     }
     return Temp;
 }
@@ -101,5 +118,29 @@ void HTPrint()
             Temp=Temp->Next;
         }
     }
+    return;
+}
+
+void HTDestroy()
+{
+    for(int i=0 ; i<M ; i++){
+        if (Table[i] != NULL){
+            if(Table[i]->Next == NULL){ // if the table[i] that we are trying to free doesn't have a list just free the table[i]
+                free(Table[i]->Name); free(Table[i]->Country); free(Table[i]->Virus); free(Table[i]->Timing); 
+                free(Table[i]);
+            }
+            else{ //if it has. Traverse the list and free every single node.
+                Citizens * Current=Table[i];
+                Citizens * Next;
+                while (Current!= NULL){
+                    Next=Current->Next;
+                    free(Current->Name); free(Current->Country); free(Current->Virus); free(Current->Timing);
+                    free(Current);
+                    Current=Next;
+                }
+            }
+        }
+    }
+    free(Table); // Free the public pointer 
     return;
 }

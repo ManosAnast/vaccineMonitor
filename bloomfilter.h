@@ -23,6 +23,8 @@ void bloomSetBit(bloom * bloom, char * Id);
 
 int bloomBitExist(bloom * bloom, char * Id);
 
+void bloomDestroy(bloom * bloom);
+
 unsigned long djb2(unsigned char *str);
 
 unsigned long sdbm(unsigned char *str);

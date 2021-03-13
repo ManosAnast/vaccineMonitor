@@ -41,3 +41,5 @@ void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool V
 void HTPrint();
 
 Citizens * HTSearch(int Item);
+
+void HTDestroy();

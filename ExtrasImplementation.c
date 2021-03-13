@@ -3,7 +3,8 @@
 Virus * VirusInit()
 {
     Virus * VList=(Virus *)calloc(1, sizeof(Virus));
-    VList->VirusName=(char *)calloc(2, sizeof(char));
+    char * Vname=(char *)calloc(2, sizeof(char));
+    VList->VirusName=Vname;
     strcpy(VList->VirusName,NULLstring); VList->Next=NULL;
     return VList;
 }
@@ -17,8 +18,7 @@ void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated
     }
     if (Temp->Next == NULL && strcmp(Temp->VirusName, VName)){
         Virus *  NewNode=(Virus *)calloc(1, sizeof(Virus));
-        NewNode->VirusName=(char *)calloc(strlen(VName), sizeof(char));
-        strcpy(NewNode->VirusName, VName);
+        NewNode->VirusName=(char *)calloc(strlen(VName)+1, sizeof(char)); strcpy(NewNode->VirusName, VName);
         if (Vaccinated){
             SkipList * slist=SLInit(0);
             LinkedList * List=slist->Header;
@@ -104,6 +104,20 @@ Virus * VirusFind(Virus * Vlist, char * VirusName)
     return Temp;
 }
 
+void VirusDestroy(Virus ** VList)
+{
+    Virus * Current=(*VList)/*->Next*/, *Next;
+    while (Current!= NULL){
+        Next=Current->Next;
+        free(Current->VirusName); 
+        SLDestroy(&(Current->vaccinated_persons)); 
+        SLDestroy(&(Current->not_vaccinated_persons)); 
+        bloomDestroy(&(Current->filter)); 
+        free(Current);
+        Current=Next;
+    }
+    return;
+}
 
 
 Country * CountryCreate()
@@ -139,5 +153,16 @@ void CountryInsert(Country ** CList, char * CName)
         strcpy(Temp->CName, CName);
     }
     Temp->Population += 1;
+    return;
+}
+
+void CountryDestroy(Country ** CList)
+{
+    Country * Current=*CList, *Next;
+    while (Current!= NULL){
+        Next=Current->Next;
+        free(Current->CName); free(Current);
+        Current=Next;
+    }
     return;
 }

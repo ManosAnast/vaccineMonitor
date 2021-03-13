@@ -50,6 +50,12 @@ int bloomBitExist(bloom * bloom, char * Id)
     return (bit1 && bit2 && bit3);
 }
 
+void bloomDestroy(bloom * bloom)
+{
+    free(bloom->bits);
+    return;
+}
+
 /*
 This algorithm (k=33) was first reported by dan bernstein many years 
 ago in comp.lang.c. 

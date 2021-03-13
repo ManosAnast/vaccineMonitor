@@ -22,3 +22,5 @@ void LLInsertHelper(LinkedList ** List, KeyType Key, int Level);
 void LLDelete(LinkedList * List, KeyType Key);
 
 void LLPrint(LinkedList * List, int Level);
+
+void LLDestroy(LinkedList ** List);

@@ -13,6 +13,7 @@ Country * CountrySearch(Country * CList, char * Name);
 
 void CountryInsert(Country ** CList, char * CName);
 
+void CountryDestroy(Country ** CList);
 
 
 typedef struct Interface{
@@ -24,7 +25,7 @@ typedef struct Interface{
 }Virus;
 
 
-char ** BreakString(char * str, const char * s, int Num);
+void BreakString(char *** Array, char * str, const char * s, int Num);
 
 /* Takes a file and insert it's contents in hash.
  *
@@ -43,6 +44,10 @@ void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
 
 void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName);
 
+Virus * VirusFind(Virus * Vlist, char * VirusName);
+
+void VirusDestroy(Virus ** VList);
+
 void TTY(Virus * Vlist, Country * CList);
 
 void ListNonVaccinated(Virus * Vlist, char * VName);
@@ -50,8 +55,6 @@ void ListNonVaccinated(Virus * Vlist, char * VName);
 void InsertCitizenRecord(Virus * Vlist, Country * CList, char ** Array);
 
 void VaccinateNow(Virus * Vlist, char ** Array);
-
-Virus * VirusFind(Virus * Vlist, char * VirusName);
 
 void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age);
 

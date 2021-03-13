@@ -26,15 +26,18 @@ void SLInsertHelper(SkipList ** Slist)
     
     int r = rand();
     int CurrLevel=1;
+    printf("Level=%d\n", Level);
     while (CurrLevel < Level){
         while (LTemp != NULL)
         {
             if (rand() % 2){
+                // LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
                 LList->Next[CurrLevel]=LTemp;
                 LList=LTemp;
             }
             LTemp=LTemp->Next[CurrLevel-1];
         }
+        // LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
         LList->Next[CurrLevel]=NULL;
         CurrLevel += 1;
         LTemp=(*Slist)->Header;
@@ -71,6 +74,15 @@ void SLPrint(SkipList * Slist)
     
     for (int i = 0; i < MaxLevel; i++){
         LLPrint(Slist->Header, i);
+    }
+    return;
+}
+
+void SLDestroy(SkipList ** SList)
+{
+    if(*SList != NULL){
+        LLDestroy(&(*SList)->Header);
+        free(*SList);
     }
     return;
 }
