@@ -53,11 +53,12 @@ void HTCreate(int Size)
     Table=(Citizens **)calloc(M, sizeof(Citizens *));
 }
 
-Citizens * NewRecord(int Id, char * Name, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
+Citizens * NewRecord(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
 {
     Citizens * NewNode=(Citizens *)calloc(1, sizeof(Citizens));
     NewNode->citizenId=Id; NewNode->Age=Age; NewNode->Vaccinated=Vaccinated; NewNode->Next=NULL;
-    NewNode->Name=(char *)calloc(strlen(Name)+1, sizeof(char)); strcpy(NewNode->Name, Name);
+    NewNode->FirstName=(char *)calloc(strlen(FirstName)+1, sizeof(char)); strcpy(NewNode->FirstName, FirstName);
+    NewNode->LastName=(char *)calloc(strlen(LastName)+1, sizeof(char)); strcpy(NewNode->LastName, LastName);
     NewNode->Country=(char *)calloc(strlen(Country)+1, sizeof(char)); strcpy(NewNode->Country, Country);
     NewNode->Virus=(char *)calloc(strlen(Virus)+1, sizeof(char)); strcpy(NewNode->Virus, Virus);
     if (!Vaccinated){
@@ -73,14 +74,14 @@ int Hash(int Item)
     return Item % M;
 }
 
-void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
+void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
 {
     int i = Hash(Id);
     if(!strcmp(DateStr, NULLstring)){
         strcpy(DateStr, "Today");
     }
     if(Table[i] == NULL){   //if the table that we want is null make it using the new function
-        Table[i]=NewRecord(Id, Name, Country, Age, Virus, Vaccinated, DateStr);
+        Table[i]=NewRecord(Id, FirstName, LastName, Country, Age, Virus, Vaccinated, DateStr);
         return;
     }
     else{
@@ -88,7 +89,7 @@ void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool V
         while (Temp->Next != NULL){ //find the end of the tables chain
             Temp=Temp->Next;
         }
-        Temp->Next=NewRecord(Id, Name, Country, Age, Virus, Vaccinated, DateStr);
+        Temp->Next=NewRecord(Id, FirstName, LastName, Country, Age, Virus, Vaccinated, DateStr);
         return;
     }
 }
@@ -111,10 +112,10 @@ void HTPrint()
 {
     for (int i = 0; i < M; i++){
         Citizens * Temp = Table[i];
-        printf("- %d %s %s %d %s %d ",Temp->citizenId,Temp->Name,Temp->Country,Temp->Age,Temp->Virus,Temp->Vaccinated); PrintDate(Temp->Timing);
+        printf("- %d %s %s %s %d %s %d ", Temp->citizenId, Temp->FirstName, Temp->LastName, Temp->Country, Temp->Age, Temp->Virus, Temp->Vaccinated); PrintDate(Temp->Timing);
         Temp=Temp->Next;
         while (Temp != NULL ){
-            printf("- %d %s %s %d %s %d ",Temp->citizenId,Temp->Name,Temp->Country,Temp->Age,Temp->Virus,Temp->Vaccinated); PrintDate(Temp->Timing);
+            printf("- %d %s %s %s %d %s %d ",Temp->citizenId,Temp->FirstName, Temp->LastName, Temp->Country, Temp->Age, Temp->Virus, Temp->Vaccinated); PrintDate(Temp->Timing);
             Temp=Temp->Next;
         }
     }
@@ -126,7 +127,7 @@ void HTDestroy()
     for(int i=0 ; i<M ; i++){
         if (Table[i] != NULL){
             if(Table[i]->Next == NULL){ // if the table[i] that we are trying to free doesn't have a list just free the table[i]
-                free(Table[i]->Name); free(Table[i]->Country); free(Table[i]->Virus); free(Table[i]->Timing); 
+                free(Table[i]->FirstName); free(Table[i]->LastName); free(Table[i]->Country); free(Table[i]->Virus); free(Table[i]->Timing); 
                 free(Table[i]);
             }
             else{ //if it has. Traverse the list and free every single node.
@@ -134,7 +135,7 @@ void HTDestroy()
                 Citizens * Next;
                 while (Current!= NULL){
                     Next=Current->Next;
-                    free(Current->Name); free(Current->Country); free(Current->Virus); free(Current->Timing);
+                    free(Current->FirstName); free(Current->LastName); free(Current->Country); free(Current->Virus); free(Current->Timing);
                     free(Current);
                     Current=Next;
                 }

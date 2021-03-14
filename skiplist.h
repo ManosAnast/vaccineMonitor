@@ -22,3 +22,5 @@ void SLPrint(SkipList * Slist);
 LinkedList * SLSearch(SkipList * Slist, KeyType Id);
 
 void SLDestroy(SkipList ** SList);
+
+void SLDelete(SkipList ** Slist, int Id);

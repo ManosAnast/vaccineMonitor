@@ -67,6 +67,26 @@ LinkedList * SLSearch(SkipList * Slist, KeyType Id)
     return NULL;
 }
 
+void SLDelete(SkipList ** Slist, int Id)
+{
+    int MaxLevel=(*Slist)->CurrLevel;
+    LinkedList * Temp=(*Slist)->Header, * Previous;
+    LinkedList * Keeper=SLSearch((*Slist), Id);
+
+    for (int i = MaxLevel-1; i >= 0; i--){
+        while (Temp->Next[i] != NULL && Temp->Id < Id){
+            Previous = Temp;
+            Temp=Temp->Next[i];
+        }
+        if (Temp->Id == Id){
+            Previous->Next[i]=Temp->Next[i];
+        } 
+        Temp=(*Slist)->Header;
+    }
+    free(Keeper->Next);
+    free(Keeper);
+    return;
+}
 
 void SLPrint(SkipList * Slist)
 {

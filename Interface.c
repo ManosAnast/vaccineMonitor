@@ -73,15 +73,15 @@ void Insert(FILE * fp)
 
         BreakString(&Array, str, s, 8);
         /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
-        if (!strcmp(Array[5],"NO")){
-            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], false, Array[6]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[0], Array[4], false , Array[6]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[2]);
+        if (!strcmp(Array[6],"NO")){
+            HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]); // give the arguments to the htinsert.
+            CountryInsert(&CList, Array[3]);
         }
-        else if (!strcmp(Array[5],"YES")){
-            HTInsert(atoi(Array[0]), Array[1], Array[2], atoi(Array[3]), Array[4], true, Array[6]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[0], Array[4], true, Array[6]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[2]);
+        else if (!strcmp(Array[6],"YES")){
+            HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]); // give the arguments to the htinsert.
+            CountryInsert(&CList, Array[3]);
         }  
     }
     
@@ -108,8 +108,8 @@ void Insert(FILE * fp)
 void TTY(Virus * Vlist, Country * CList)
 {
     char **Array;
-    Array=(char**)malloc(8*sizeof(char *)); // make an arry of strings with 30 characters each string.
-    for(int i=0 ; i< 8 ; i++){
+    Array=(char**)malloc(9*sizeof(char *)); // make an arry of strings with 30 characters each string.
+    for(int i=0 ; i< 9 ; i++){
         Array[i]=(char*)malloc(50*sizeof(char));
     }
     while (1){
@@ -122,7 +122,7 @@ void TTY(Virus * Vlist, Country * CList)
         if(!strcmp(Answer, "exit")){
             break;
         }
-        BreakString(&Array, Answer, " ", 8);
+        BreakString(&Array, Answer, " ", 9);
         if (!strcmp(Array[0], "vaccineStatusBloom")){
             VaccinateStatusBloom(Vlist, Array[1], Array[2]);
         }
@@ -158,7 +158,7 @@ void TTY(Virus * Vlist, Country * CList)
         
         printf("\n");
     }
-    for (int i = 0; i < 8; i++){
+    for (int i = 0; i < 9; i++){
         free(Array[i]);
     }
     free(Array);
@@ -209,7 +209,7 @@ void ListNonVaccinated(Virus * Vlist, char * VName)
     while (List != NULL){
         Person=HTSearch(List->Id);
         if (Person != NULL){
-            printf("%d %s %s %d\n",Person->citizenId, Person->Name, Person->Country, Person->Age);
+            printf("%d %s %s %s %d\n",Person->citizenId, Person->FirstName, Person->LastName, Person->Country, Person->Age);
         }
         List=List->Next[0];
     }
@@ -230,28 +230,28 @@ void InsertCitizenRecord(Virus * Vlist, Country * CList, char ** Array)
             printf("VACCINATED ON\n");
         }
         else{
-            if (!strcmp(Array[6],"NO")){
-                HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
-                VirusInsert(&Vlist, Array[1], Array[5], false, Array[7]); // give the arguments to the htinsert.
-                CountryInsert(&CList, Array[3]);
+            if (!strcmp(Array[7],"NO")){
+                HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], false, Array[8]); // give the arguments to the htinsert.
+                VirusInsert(&Vlist, Array[1], Array[6], false, Array[8]); // give the arguments to the htinsert.
+                CountryInsert(&CList, Array[4]);
             }
-            else if (!strcmp(Array[6],"YES")){
-                HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
-                VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
-                CountryInsert(&CList, Array[3]);
+            else if (!strcmp(Array[7],"YES")){
+                HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, Array[8]); // give the arguments to the htinsert.
+                VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
+                CountryInsert(&CList, Array[4]);
             }  
         }
     }
     else{
-        if (!strcmp(Array[6],"NO")){
-            HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[1], Array[5], false, Array[7]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[3]);
+        if (!strcmp(Array[7],"NO")){
+            HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], false, Array[8]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[1], Array[6], false, Array[8]); // give the arguments to the htinsert.
+            CountryInsert(&CList, Array[4]);
         }
-        else if (!strcmp(Array[6],"YES")){
-            HTInsert(atoi(Array[1]), Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[3]);
+        else if (!strcmp(Array[7],"YES")){
+            HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, Array[8]); // give the arguments to the htinsert.
+            VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
+            CountryInsert(&CList, Array[4]);
         } 
     }
     return;
@@ -274,6 +274,7 @@ void VaccinateNow(Virus * Vlist, char ** Array)
         VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
         Citizens * Rec=HTSearch(atoi(Array[1])); 
         if (Rec != NULL){
+            SLDelete(&(Temp->not_vaccinated_persons), atoi(Array[1]));
             Rec->Vaccinated=true; Rec->Timing=CreateDate("Today");
         }
         

@@ -19,7 +19,8 @@ void PrintDate(Date * Timing);
 
 typedef struct hash{
     int citizenId;
-    char * Name;
+    char * FirstName;
+    char * LastName;
     char * Country;
     int Age;
     char * Virus;
@@ -32,10 +33,10 @@ typedef struct hash{
 void HTCreate(int);
 
 // Makes a new node with the given attributes
-Citizens * NewRecord(int, char *, char *, int, char *, bool, char * DateStr);
+Citizens * NewRecord(int, char *, char *, char *, int, char *, bool, char * DateStr);
 
 // Insert at the hash table a new node.
-void HTInsert(int Id, char * Name, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
+void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
 
 // Prints all the nodes of a Table.
 void HTPrint();
