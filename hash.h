@@ -16,6 +16,8 @@ Date * CreateDate(char * DateStr);
 
 void PrintDate(Date * Timing);
 
+bool CheckDate(Date * Timing1, Date * Timing2);
+
 
 typedef struct hash{
     int citizenId;
@@ -41,6 +43,6 @@ void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age
 // Prints all the nodes of a Table.
 void HTPrint();
 
-Citizens * HTSearch(int Item);
+Citizens * HTSearch(int Item, char * Virus);
 
 void HTDestroy();

@@ -14,7 +14,9 @@ void BreakString(char *** Array, char * str, const char * s, int Num)
 {
     int index=0;
     char ** Temp=*Array;
-    char * token = strtok(str, s);   //we use strtok in order to break the string into the different data in order to give it to the HTInsert
+    char * Break=(char *)calloc(strlen(str)+1, sizeof(char)); 
+    strcpy(Break, str);
+    char * token = strtok(Break, s);   //we use strtok in order to break the string into the different data in order to give it to the HTInsert
     //now we will use an array of strings that keeps all the variables that we need for the hash table
     while (token != NULL && index < Num)   //this loop gives the variables that we need to the array from the token(strtok)
     {
@@ -22,11 +24,10 @@ void BreakString(char *** Array, char * str, const char * s, int Num)
         token = strtok(NULL, s);
         index++;
     }
-    // printf("index=%d, Num=%d \n", index, Num);
     for (int i = index; i < Num; i++){
         strcpy(Temp[i], NULLstring);
     }
-    
+    free(Break);
     return;
 }
 
@@ -70,18 +71,32 @@ void Insert(FILE * fp)
         if( feof(fp) ) { 
             break ;
         }
-
+        
         BreakString(&Array, str, s, 8);
+        if (atoi(Array[0])== 23)
+        {
+            Nothing();
+        }
         /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
         if (!strcmp(Array[6],"NO")){
-            HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[3]);
+            if(HTSearch(atoi(Array[0]), Array[5])!=NULL){
+                printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
+            }
+            else{
+                HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
+                VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]); // give the arguments to the htinsert.
+                CountryInsert(&CList, Array[3]);
+            }
         }
         else if (!strcmp(Array[6],"YES")){
-            HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[3]);
+            if(HTSearch(atoi(Array[0]), Array[5])!=NULL){
+                printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
+            }
+            else{
+                HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
+                VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]); // give the arguments to the htinsert.
+                CountryInsert(&CList, Array[3]);
+            }
         }  
     }
     
@@ -186,7 +201,7 @@ void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName)
     if (exist != NULL)
     {
         printf("VACCINATED ON "); 
-        Citizens * Rec=HTSearch(atoi(Id)); PrintDate(Rec->Timing);
+        Citizens * Rec=HTSearch(atoi(Id), VirusName); PrintDate(Rec->Timing);
     }
     else{
         printf("NOT VACCINATED\n");
@@ -207,7 +222,7 @@ void ListNonVaccinated(Virus * Vlist, char * VName)
     LinkedList * List=Temp->not_vaccinated_persons->Header->Next[0];
     Citizens * Person;
     while (List != NULL){
-        Person=HTSearch(List->Id);
+        Person=HTSearch(List->Id, VName);
         if (Person != NULL){
             printf("%d %s %s %s %d\n",Person->citizenId, Person->FirstName, Person->LastName, Person->Country, Person->Age);
         }
@@ -218,12 +233,12 @@ void ListNonVaccinated(Virus * Vlist, char * VName)
 
 void InsertCitizenRecord(Virus * Vlist, Country * CList, char ** Array)
 {
-    Virus * Temp = VirusFind(Vlist, Array[5]);
+    Virus * Temp = VirusFind(Vlist, Array[6]);
     bloom filter= Temp->filter;
     int exist=bloomBitExist(&filter, Array[1]);
     if (exist)
     {
-        Virus * Temp = VirusFind(Vlist, Array[5]);
+        Virus * Temp = VirusFind(Vlist, Array[6]);
         LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Array[1]));
         if (exist != NULL)
         {
@@ -260,19 +275,19 @@ void InsertCitizenRecord(Virus * Vlist, Country * CList, char ** Array)
 /*Remove from nonvaccinated skip list*/
 void VaccinateNow(Virus * Vlist, char ** Array)
 {
-    Virus * Temp = VirusFind(Vlist, Array[5]);
+    Virus * Temp = VirusFind(Vlist, Array[6]);
     LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Array[1]));
     if (exist != NULL)
     {
         printf("ERROR: CITIZEN %s ALREADY VACCINATED ON ", Array[1]);
-        Citizens * Rec=HTSearch(atoi(Array[1]));
+        Citizens * Rec=HTSearch(atoi(Array[1]), Array[6]);
         if (Rec != NULL){
             PrintDate(Rec->Timing);
         }
     }
     else{
-        VirusInsert(&Vlist, Array[1], Array[5], true, Array[7]); // give the arguments to the htinsert.
-        Citizens * Rec=HTSearch(atoi(Array[1])); 
+        VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
+        Citizens * Rec=HTSearch(atoi(Array[1]), Array[6]); 
         if (Rec != NULL){
             SLDelete(&(Temp->not_vaccinated_persons), atoi(Array[1]));
             Rec->Vaccinated=true; Rec->Timing=CreateDate("Today");
@@ -303,7 +318,7 @@ void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age)
             return;
         }
         SkipList *SList=Temp->vaccinated_persons;
-        Cat = CalculateVaccinated(SList, Array[1], Age, Cat);
+        Cat = CalculateVaccinated(Temp, Array[1], Age, Cat, Array[3], Array[4]);
         Country * country=CountrySearch(CList, Array[1]);        
         PrintCat(country->CName, Cat, Age, country->Population);
         free(Cat);
@@ -320,7 +335,7 @@ void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age)
     CList=CList->Next;
     while (CList != NULL){
         SkipList *SList=Temp->vaccinated_persons;
-        Cat = CalculateVaccinated(SList, CList->CName, Age, Cat);
+        Cat = CalculateVaccinated(Temp, CList->CName, Age, Cat, Array[2], Array[3]);
         PrintCat(CList->CName, Cat, Age, CList->Population);
         CList=CList->Next;
     }
@@ -329,23 +344,27 @@ void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age)
     return;
 }
 
-int * CalculateVaccinated(SkipList * SList, char * Country, bool Age, int * Array)
+int * CalculateVaccinated(Virus * Vlist, char * Country, bool Age, int * Array, char * Date1, char * Date2)
 {
-    LinkedList * Temp=SList->Header;
+    LinkedList * Temp=Vlist->vaccinated_persons->Header;
+    Date * Timing1=CreateDate(Date1), * Timing2=CreateDate(Date2);
     Citizens * Record;
     Temp=Temp->Next[0];
     while (Temp != NULL){
-        Record=HTSearch(Temp->Id);
-        if(!strcmp(Record->Country, Country)){ 
-            if(Age){
-                InsertByAge(Array, Record);
-            }
-            else{
-                *Array += (int)Record->Vaccinated;
+        Record=HTSearch(Temp->Id, Vlist->VirusName);
+        if(Record != NULL){    
+            if(!strcmp(Record->Country, Country) && CheckDate(Record->Timing, Timing1) && CheckDate(Timing2, Record->Timing)){ 
+                if(Age){
+                    InsertByAge(Array, Record);
+                }
+                else{
+                    *Array += (int)Record->Vaccinated;
+                }
             }
         }
         Temp=Temp->Next[0];
     }
+    free(Timing1); free(Timing2);
     return Array;
 }
 
@@ -370,16 +389,16 @@ void PrintCat(char * Country, int * Array, bool Age, int Population)
 {
     if (Age){
         printf("%s\n", Country);
-        printf("0-20 %d %d% \n", Array[0], Array[0]/Population * 100);
-        printf("20-40 %d %d% \n", Array[1], Array[1]/Population * 100);
-        printf("40-60 %d %d% \n", Array[2], Array[2]/Population * 100);
-        printf("60+ %d %d% \n", Array[3], Array[3]/Population * 100);
+        printf("0-20 %d %f% \n", Array[0], (double)Array[0]/(double)Population * 100);
+        printf("20-40 %d %f% \n", Array[1], (double)Array[1]/(double)Population * 100);
+        printf("40-60 %d %f% \n", Array[2], (double)Array[2]/(double)Population * 100);
+        printf("60+ %d %f% \n", Array[3], (double)Array[3]/(double)Population * 100);
         for (int i = 0; i < 4; i++){
             Array[i]=0;
         }
         return;
     }
-    printf("%s:%d %d% \n", Country, *Array, *Array/Population * 100);
+    printf("%s:%d %f% \n", Country, *Array, (double)*Array/(double)Population * 100);
     *Array=0;
     return;
 }

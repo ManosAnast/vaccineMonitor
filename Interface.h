@@ -58,7 +58,7 @@ void VaccinateNow(Virus * Vlist, char ** Array);
 
 void populationStatus(Virus * VList, Country * CList, char ** Array, bool Age);
 
-int * CalculateVaccinated(SkipList * SList, char * Country, bool Age, int * Array);
+int * CalculateVaccinated(Virus * SList, char * Country, bool Age, int * Array, char * Date1, char * Date2);
 
 void popStatusByAge(Virus * Vlist, Country * CList, char ** Array);
 

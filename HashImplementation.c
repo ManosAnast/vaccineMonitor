@@ -47,6 +47,25 @@ void PrintDate(Date * Timing)
     printf("\n"); return;
 }
 
+bool CheckDate(Date * Timing1, Date * Timing2)
+{
+    if (Timing1->Year > Timing2->Year){
+        return true;                
+    }
+    else if (Timing1->Year == Timing2->Year){
+        if (Timing1->Month > Timing2->Month){
+            return true;
+        }
+        else if (Timing1->Month == Timing2->Month){
+            if (Timing1->Days >= Timing2->Days){
+                return true;
+            }            
+        }
+    }
+    
+    return false;
+}
+
 void HTCreate(int Size)
 {
     M=Size/5;
@@ -96,16 +115,19 @@ void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age
 
 //Searches for a citizen.If the citizen doesn't exist print error and return null
 // If the citizen do exist return the citizen.
-Citizens * HTSearch(int Item)
+Citizens * HTSearch(int Item, char * Virus)
 {
     Citizens * Temp = Table[Hash(Item)];
-    while (Temp->Next != NULL && Temp->citizenId != Item ){
+    if(Temp == NULL){
+        return NULL;
+    }
+    while (Temp->Next != NULL ){
+        if (Temp->citizenId == Item && !strcmp(Temp->Virus, Virus)){
+            return Temp;
+        }
         Temp=Temp->Next;
     }
-    if(Temp->Next == NULL && Temp->citizenId != Item){
-        printf("Citizen %d does not exist\n",Item); return NULL;
-    }
-    return Temp;
+    return NULL;
 }
 
 void HTPrint()

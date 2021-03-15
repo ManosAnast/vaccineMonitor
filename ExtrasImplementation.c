@@ -84,10 +84,6 @@ void VirusSkipList(Virus ** VList)
     while (Temp != NULL){
         SLInsert(Temp->vaccinated_persons); 
         SLInsert(Temp->not_vaccinated_persons);
-        printf("%s\nvaccinated_persons:\n",Temp->VirusName);
-        SLPrint(Temp->vaccinated_persons);
-        printf("\n\nnot_vaccinated_persons:\n");
-        SLPrint(Temp->not_vaccinated_persons); printf("\n\n");
         Temp=Temp->Next;
     }
     
