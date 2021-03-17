@@ -84,6 +84,9 @@ Citizens * NewRecord(int Id, char * FirstName, char * LastName, char * Country, 
         NewNode->Timing=NULL;  return NewNode;
     }
     NewNode->Timing=CreateDate(DateStr);
+    if(NewNode->Timing == NULL){
+        return NULL;
+    }
     return NewNode;
 }
 
@@ -93,7 +96,7 @@ int Hash(int Item)
     return Item % M;
 }
 
-void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
+int HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr)
 {
     int i = Hash(Id);
     if(!strcmp(DateStr, NULLstring)){
@@ -101,7 +104,10 @@ void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age
     }
     if(Table[i] == NULL){   //if the table that we want is null make it using the new function
         Table[i]=NewRecord(Id, FirstName, LastName, Country, Age, Virus, Vaccinated, DateStr);
-        return;
+        if (Table[i] == NULL){
+            return 0;
+        }
+        return 1;
     }
     else{
         Citizens * Temp=Table[i];
@@ -109,7 +115,10 @@ void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age
             Temp=Temp->Next;
         }
         Temp->Next=NewRecord(Id, FirstName, LastName, Country, Age, Virus, Vaccinated, DateStr);
-        return;
+        if (Temp->Next == NULL){
+            return 0;
+        }
+        return 1;
     }
 }
 
@@ -126,6 +135,9 @@ Citizens * HTSearch(int Item, char * Virus)
             return Temp;
         }
         Temp=Temp->Next;
+    }
+    if (Temp->citizenId == Item && !strcmp(Temp->Virus, Virus)){
+        return Temp;
     }
     return NULL;
 }

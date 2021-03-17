@@ -83,9 +83,11 @@ void Insert(FILE * fp)
                 printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
             }
             else{
-                HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
-                VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]); // give the arguments to the htinsert.
-                CountryInsert(&CList, Array[3]);
+                int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]); // give the arguments to the htinsert.
+                if (Flag){
+                    VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]); // give the arguments to the htinsert.
+                    CountryInsert(&CList, Array[3]);
+                }
             }
         }
         else if (!strcmp(Array[6],"YES")){
@@ -93,9 +95,11 @@ void Insert(FILE * fp)
                 printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
             }
             else{
-                HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
-                VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]); // give the arguments to the htinsert.
-                CountryInsert(&CList, Array[3]);
+                int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]); // give the arguments to the htinsert.
+                if(Flag){    
+                    VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]); // give the arguments to the htinsert.
+                    CountryInsert(&CList, Array[3]);
+                }
             }
         }  
     }
@@ -246,27 +250,36 @@ void InsertCitizenRecord(Virus * Vlist, Country * CList, char ** Array)
         }
         else{
             if (!strcmp(Array[7],"NO")){
-                HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], false, Array[8]); // give the arguments to the htinsert.
-                VirusInsert(&Vlist, Array[1], Array[6], false, Array[8]); // give the arguments to the htinsert.
-                CountryInsert(&CList, Array[4]);
+                int Flag=HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], false, Array[8]); // give the arguments to the htinsert.
+                if(Flag){    
+                    VirusInsert(&Vlist, Array[1], Array[6], false, Array[8]); // give the arguments to the htinsert.
+                    CountryInsert(&CList, Array[4]);
+                }
             }
             else if (!strcmp(Array[7],"YES")){
-                HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, Array[8]); // give the arguments to the htinsert.
-                VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
-                CountryInsert(&CList, Array[4]);
+                int Flag=HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, Array[8]); // give the arguments to the htinsert.
+                if(Flag){
+                    VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
+                    CountryInsert(&CList, Array[4]);
+                }
             }  
         }
     }
     else{
         if (!strcmp(Array[7],"NO")){
-            HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], false, Array[8]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[1], Array[6], false, Array[8]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[4]);
+            int Flag=HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], false, Array[8]); // give the arguments to the htinsert.
+            if (Flag){
+                VirusInsert(&Vlist, Array[1], Array[6], false, Array[8]); // give the arguments to the htinsert.
+                CountryInsert(&CList, Array[4]);
+            }
+                
         }
         else if (!strcmp(Array[7],"YES")){
-            HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, Array[8]); // give the arguments to the htinsert.
-            VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
-            CountryInsert(&CList, Array[4]);
+            int Flag=HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, Array[8]); // give the arguments to the htinsert.
+            if(Flag){
+                VirusInsert(&Vlist, Array[1], Array[6], true, Array[8]); // give the arguments to the htinsert.
+                CountryInsert(&CList, Array[4]);
+            }
         } 
     }
     return;

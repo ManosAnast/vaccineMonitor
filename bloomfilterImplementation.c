@@ -1,9 +1,9 @@
 # include "bloomfilter.h"
 
-bloom bloomInit(int NumOfBits)
+bloom bloomInit(int NumOfBytes)
 {
     bloom filter;
-    filter.NumofBytes=NumOfBits; filter.bits=(char *)calloc(NumOfBits, sizeof(char));
+    filter.NumofBytes=NumOfBytes; filter.bits=(char *)calloc(NumOfBytes, sizeof(char));
     return filter;
 }
 
@@ -11,9 +11,7 @@ void bloomSetBit(bloom * bloom, char * Id)
 {   
     int num1, num2, num3;
     num1=djb2(Id)%(BloomNum*8); num2=sdbm(Id)%(BloomNum*8); num3=hash_i(Id, 3)%(BloomNum*8);
-    // if (bloomBitExist(bloom, Id)){// If the bits that we want to change are already 1 return
-    //     return;
-    // }
+
     /*Set the bit that djb2 returned*/
     int Byte=num1/8, x=1;
     int N=num1 - 8*Byte;

@@ -26,7 +26,6 @@ void SLInsertHelper(SkipList ** Slist)
     
     int r = rand();
     int CurrLevel=1;
-    printf("Level=%d\n", Level);
     while (CurrLevel < Level){
         while (LTemp != NULL)
         {

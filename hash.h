@@ -38,7 +38,7 @@ void HTCreate(int);
 Citizens * NewRecord(int, char *, char *, char *, int, char *, bool, char * DateStr);
 
 // Insert at the hash table a new node.
-void HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
+int HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
 
 // Prints all the nodes of a Table.
 void HTPrint();
