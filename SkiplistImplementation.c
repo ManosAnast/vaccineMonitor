@@ -11,6 +11,7 @@ SkipList * SLInit(int Level)
 
 void SLInsert(SkipList * Slist)
 {
+    Slist->CurrLevel=Log( Slist->Header->Id * (-1) );
     SLInsertHelper(&Slist);
     return;
 }
@@ -26,7 +27,8 @@ void SLInsertHelper(SkipList ** Slist)
     
     int r = rand();
     int CurrLevel=1;
-    while (CurrLevel < Level){
+    int level=STemp->CurrLevel;
+    while (CurrLevel < level){
         while (LTemp != NULL)
         {
             if (rand() % 2){
@@ -105,3 +107,8 @@ void SLDestroy(SkipList ** SList)
     }
     return;
 }
+
+unsigned int Log(unsigned int n) 
+{ 
+    return (n > 1) ? 1 + Log(n / 2) : 0; 
+} 

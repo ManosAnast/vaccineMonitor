@@ -3,7 +3,7 @@
 LinkedList * LLInit()
 {
     LinkedList * New=(LinkedList *)malloc(sizeof(LinkedList));
-    New->Id=-1; New->Next=(LinkedList **)calloc(Level, sizeof(LinkedList *));
+    New->Id=0; New->Next=(LinkedList **)calloc(Level, sizeof(LinkedList *));
     return New;
 }
 
@@ -18,6 +18,7 @@ void LLInsert(LinkedList * List, KeyType Key, int CurrLevel)
 void LLInsertHelper(LinkedList ** List, KeyType Key, int CurrLevel)
 {
     LinkedList * Temp= *List, * Previous, * NewNode;
+    Temp->Id -= 1;
     while (Temp->Next[CurrLevel] != NULL && Temp->Id < Key){
         Previous = Temp;
         Temp=Temp->Next[CurrLevel];
@@ -58,9 +59,7 @@ void LLDestroy(LinkedList ** List)
     LinkedList * Current=*List, *Next;
     while (Current!= NULL){
         Next=Current->Next[0];
-        // for (int i = 0; i < Level; i++){
         free(Current->Next);
-        // }
         free(Current);
         Current=Next;
     }

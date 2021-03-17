@@ -1,9 +1,5 @@
 # include "Interface.h"
 
-unsigned int Log(unsigned int n) 
-{ 
-    return (n > 1) ? 1 + Log(n / 2) : 0; 
-} 
 
 void Nothing()
 {
@@ -73,10 +69,6 @@ void Insert(FILE * fp)
         }
         
         BreakString(&Array, str, s, 8);
-        if (atoi(Array[0])== 23)
-        {
-            Nothing();
-        }
         /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
         if (!strcmp(Array[6],"NO")){
             if(HTSearch(atoi(Array[0]), Array[5])!=NULL){
@@ -112,6 +104,15 @@ void Insert(FILE * fp)
     Nothing();
 
     VirusSkipList(&Vlist);
+
+    Virus * Temp = Vlist->Next;
+    while (Temp != NULL){
+        printf("%s:\n\n", Temp->VirusName);
+        printf("Vaccinated:\n"); SLPrint(Temp->vaccinated_persons);
+        printf("\nNot Vaccinated:\n"); SLPrint(Temp->not_vaccinated_persons);
+        Temp=Temp->Next;
+    }
+    
 
     TTY(Vlist, CList);
     
