@@ -55,6 +55,8 @@ virus=($(cat "$virusfile")) # Array with viruses names
 countries=($(cat "$countryfile")) # Array with countries
 viruslength=${#virus[@]}
 countrieslength=${#countries[@]}
+countrieslength=$[$countrieslength-1]
+viruslength=$[$viruslength-1]
 
 # Empty the new file from the previous things that it contained and insert the first entry
 if [ $(shuf -i 0-1 -n 1) == 1 ]
