@@ -3,7 +3,7 @@
 LinkedList * LLInit()
 {
     LinkedList * New=(LinkedList *)malloc(sizeof(LinkedList));
-    New->Id=0; New->Next=(LinkedList **)calloc(Level, sizeof(LinkedList *));
+    New->Id=0; New->Next=(LinkedList **)calloc(1, sizeof(LinkedList *));
     return New;
 }
 
@@ -25,7 +25,7 @@ void LLInsertHelper(LinkedList ** List, KeyType Key, int CurrLevel)
     }
     /*Make a new node*/
     NewNode=(LinkedList *)calloc(1, sizeof(LinkedList));
-    NewNode->Next=(LinkedList **)calloc(Level, sizeof(LinkedList *));
+    NewNode->Next=(LinkedList **)calloc(1, sizeof(LinkedList *));
     NewNode->Id=Key;
 
     /*Connect the new node to the correct position*/
