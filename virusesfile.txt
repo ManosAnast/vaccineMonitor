@@ -1,0 +1,10 @@
+COVID-19
+SARS-1
+H1N1
+Ebola
+Hepatitis-A
+Flu
+Hepatitis-C
+Hepatitis-B
+Hepatitis-D
+HIV
