@@ -5,6 +5,8 @@ Virus * VirusInit()
     Virus * VList=(Virus *)calloc(1, sizeof(Virus));
     char * Vname=(char *)calloc(2, sizeof(char));
     VList->VirusName=Vname;
+    VList->vaccinated_persons=SLInit(0);
+    VList->not_vaccinated_persons=SLInit(0);
     strcpy(VList->VirusName,NULLstring); VList->Next=NULL;
     return VList;
 }

@@ -32,7 +32,7 @@ void BreakString(char *** Array, char * str, const char * s, int Num);
  * fp: File that contains the data that you want to insert.
  * 
 */
-void Insert(FILE * fp);
+void Insert(char * text);
 
 Virus * VirusInit();
 

@@ -27,18 +27,29 @@ void BreakString(char *** Array, char * str, const char * s, int Num)
     return;
 }
 
-void Insert(FILE * fp)
+void Insert(char * text)
 {
     int ch,Size=0,Bloom;
 
-    //Level is log of the number of entries
-    Size=12;
-    Level=Log(Size);
     Virus * Vlist=VirusInit();
     Country * CList=CountryCreate();
+    FILE * fp;
+
+    fp=fopen(text , "r");   
+    while(1) { 
+
+        ch = getc(fp);
+        if( feof(fp) ) { 
+            break ;
+        }
+        if(ch == '\n'){  //Finds how many students are added.
+            Size+=1;
+        }
+    }
+    fclose(fp);
+    fp=fopen(text , "r");   
 
     HTCreate(Size);
-
     char *str;
     str=(char *)calloc(150,sizeof(char));
     
@@ -95,32 +106,23 @@ void Insert(FILE * fp)
             }
         }  
     }
-    
+    fclose(fp);
+    Level=Log(Size);
     for (int i = 0; i < 8; i++){
         free(Array[i]);
     }
     free(Array);
+    free(str);
 
     Nothing();
 
     VirusSkipList(&Vlist);
 
-    Virus * Temp = Vlist->Next;
-    while (Temp != NULL){
-        printf("%s:\n\n", Temp->VirusName);
-        printf("Vaccinated:\n"); SLPrint(Temp->vaccinated_persons);
-        printf("\nNot Vaccinated:\n"); SLPrint(Temp->not_vaccinated_persons);
-        Temp=Temp->Next;
-    }
-    
-
     TTY(Vlist, CList);
     
     VirusDestroy(&Vlist);
-    CountryDestroy(&CList); 
-    // free(Vlist); free(CList);
+    CountryDestroy(&CList);
 
-    free(str);
     return;
 }
 

@@ -11,8 +11,11 @@ SkipList * SLInit(int Level)
 
 void SLInsert(SkipList * Slist)
 {
-    Slist->CurrLevel=Log( Slist->Header->Id * (-1) );
-    SLInsertHelper(&Slist);
+    if(Slist!=NULL){
+        Slist->CurrLevel=Log( Slist->Header->Id * (-1) );
+        Slist->Header->Id=-1;
+        SLInsertHelper(&Slist);
+    }
     return;
 }
 
@@ -20,11 +23,9 @@ void SLInsert(SkipList * Slist)
 void SLInsertHelper(SkipList ** Slist)
 {
     SkipList * STemp= *Slist;
-    LinkedList * LTemp= (*Slist)->Header;
-    LinkedList * LList= (*Slist)->Header;
-
+    LinkedList * LTemp= STemp->Header;
+    LinkedList * LList= STemp->Header;
     srand(time(NULL));   // Initialize for "toss a coin" operation.
-    
     int r = rand();
     int CurrLevel=1;
     int level=STemp->CurrLevel;
@@ -32,18 +33,19 @@ void SLInsertHelper(SkipList ** Slist)
         while (LTemp != NULL)
         {
             if (rand() % 2){
-                // LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
+                LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
+                LList->Next[CurrLevel]=NULL;
                 LList->Next[CurrLevel]=LTemp;
-                LList=LTemp;
+                LList=LList->Next[CurrLevel];
             }
-            LTemp=LTemp->Next[CurrLevel-1];
+            LTemp=LTemp->Next[CurrLevel-1]; 
         }
-        // LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
+        LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
         LList->Next[CurrLevel]=NULL;
         CurrLevel += 1;
-        LTemp=(*Slist)->Header;
+        LTemp=STemp->Header;
+        LList=LTemp;
     }
-    STemp->CurrLevel=CurrLevel;
     return;
 }
 
@@ -91,10 +93,12 @@ void SLDelete(SkipList ** Slist, int Id)
 
 void SLPrint(SkipList * Slist)
 {
-    int MaxLevel=Slist->CurrLevel;
-    
-    for (int i = 0; i < MaxLevel; i++){
-        LLPrint(Slist->Header, i);
+    if(Slist!= NULL){
+        int MaxLevel=Slist->CurrLevel;
+        
+        for (int i = 0; i < MaxLevel; i++){
+            LLPrint(Slist->Header, i);
+        }
     }
     return;
 }
