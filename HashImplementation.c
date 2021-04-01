@@ -122,7 +122,7 @@ int HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age,
     }
 }
 
-//Searches for a citizen.If the citizen doesn't exist print error and return null
+//Searches for a citizen.If the citizen doesn't return null
 // If the citizen do exist return the citizen.
 Citizens * HTSearch(int Item, char * Virus)
 {
@@ -130,14 +130,11 @@ Citizens * HTSearch(int Item, char * Virus)
     if(Temp == NULL){
         return NULL;
     }
-    while (Temp->Next != NULL ){
-        if (Temp->citizenId == Item && !strcmp(Temp->Virus, Virus)){
+    while (Temp != NULL ){
+        if (Temp->citizenId == Item && !strcmp(Temp->Virus, Virus)){ // A citizen can have been inserted multiple times. Therefore, I check and the virus.
             return Temp;
         }
         Temp=Temp->Next;
-    }
-    if (Temp->citizenId == Item && !strcmp(Temp->Virus, Virus)){
-        return Temp;
     }
     return NULL;
 }

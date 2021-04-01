@@ -1,6 +1,6 @@
 # include "skiplist.h"
 
-SkipList * SLInit(int Level)
+SkipList * SLInit()
 {
     SkipList * SList;
     SList=(SkipList *)calloc(1,sizeof(SkipList));
@@ -12,7 +12,7 @@ SkipList * SLInit(int Level)
 void SLInsert(SkipList * Slist)
 {
     if(Slist!=NULL){
-        Slist->CurrLevel=Log( Slist->Header->Id * (-1) );
+        Slist->CurrLevel=Log( Slist->Header->Id * (-1) ); // Give the currlevel the log of the number of entries that the list has.
         Slist->Header->Id=-1;
         SLInsertHelper(&Slist);
     }
@@ -23,16 +23,15 @@ void SLInsert(SkipList * Slist)
 void SLInsertHelper(SkipList ** Slist)
 {
     SkipList * STemp= *Slist;
-    LinkedList * LTemp= STemp->Header;
-    LinkedList * LList= STemp->Header;
+    LinkedList * LTemp= STemp->Header; // LTemp reprsents the previous level of the skiplist.
+    LinkedList * LList= STemp->Header; // LList represents the current level of the skiplist.
     srand(time(NULL));   // Initialize for "toss a coin" operation.
-    int r = rand();
     int CurrLevel=1;
     int level=STemp->CurrLevel;
     while (CurrLevel < level){
-        while (LTemp != NULL)
-        {
-            if (rand() % 2){
+
+        while (LTemp != NULL){ // Traverse the previous level list.
+            if (rand() % 2){ // If true, add the node to the current level list.
                 LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
                 LList->Next[CurrLevel]=NULL;
                 LList->Next[CurrLevel]=LTemp;
@@ -43,6 +42,7 @@ void SLInsertHelper(SkipList ** Slist)
         LList->Next=(LinkedList **)realloc(LList->Next, (CurrLevel+1)*sizeof(LinkedList *));
         LList->Next[CurrLevel]=NULL;
         CurrLevel += 1;
+        // Give to LTemp and LList the header, in order to start again from the top
         LTemp=STemp->Header;
         LList=LTemp;
     }
@@ -50,22 +50,19 @@ void SLInsertHelper(SkipList ** Slist)
 }
 
 
-LinkedList * SLSearch(SkipList * Slist, KeyType Id)
+LinkedList * SLSearch(SkipList * Slist, int Id)
 {
     int MaxLevel=Slist->CurrLevel;
     LinkedList * Temp=Slist->Header;
 
-    for (int i = MaxLevel-1; i >= 0; i--){
-        while (Temp->Next[i] != NULL && Temp->Id < Id){
+    for (int i = MaxLevel-1; i >= 0; i--){ // Start from the max level.
+        while (Temp->Next[i] != NULL && Temp->Id < Id){ // Traverse the level.
             Temp=Temp->Next[i];
         }
-        if (Temp->Id == Id){
+        if (Temp->Id == Id){ // The first time that you find the node that you want, return.
             return Temp;
         }
-        if (Temp->Next[i] == NULL && i == 0 || Temp->Id > Id){
-            return NULL;
-        }
-        
+        Temp=Slist->Header;
     }
     return NULL;
 }
@@ -75,14 +72,19 @@ void SLDelete(SkipList ** Slist, int Id)
     int MaxLevel=(*Slist)->CurrLevel;
     LinkedList * Temp=(*Slist)->Header, * Previous;
     LinkedList * Keeper=SLSearch((*Slist), Id);
+    if (Keeper == NULL){
+        return;
+    }
+    
+    for (int i = MaxLevel-1; i >= 0; i--){ // Start from the max level.
 
-    for (int i = MaxLevel-1; i >= 0; i--){
-        while (Temp->Next[i] != NULL && Temp->Id < Id){
+        while (Temp->Next[i] != NULL && Temp->Id < Id){ // Traverse the level.
             Previous = Temp;
             Temp=Temp->Next[i];
         }
-        if (Temp->Id == Id){
+        if (Temp->Id == Id){ // The first time that you find the node that you want break and free the node.
             Previous->Next[i]=Temp->Next[i];
+            break;
         } 
         Temp=(*Slist)->Header;
     }

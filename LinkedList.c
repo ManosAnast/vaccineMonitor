@@ -8,20 +8,20 @@ LinkedList * LLInit()
 }
 
 
-void LLInsert(LinkedList * List, KeyType Key, int CurrLevel)
+void LLInsert(LinkedList * List, int Key)
 {
-    LLInsertHelper(&List, Key, CurrLevel);
+    LLInsertHelper(&List, Key);
     return;
 }
 
 
-void LLInsertHelper(LinkedList ** List, KeyType Key, int CurrLevel)
+void LLInsertHelper(LinkedList ** List, int Key) // It is used only for the 0th level.
 {
     LinkedList * Temp= *List, * Previous, * NewNode;
     Temp->Id -= 1;
-    while (Temp->Next[CurrLevel] != NULL && Temp->Id < Key){
+    while (Temp->Next[0] != NULL && Temp->Id < Key){
         Previous = Temp;
-        Temp=Temp->Next[CurrLevel];
+        Temp=Temp->Next[0];
     }
     /*Make a new node*/
     NewNode=(LinkedList *)calloc(1, sizeof(LinkedList));
@@ -29,13 +29,13 @@ void LLInsertHelper(LinkedList ** List, KeyType Key, int CurrLevel)
     NewNode->Id=Key;
 
     /*Connect the new node to the correct position*/
-    if(Temp->Next[CurrLevel] == NULL && Temp->Id < Key){
-        NewNode->Next[CurrLevel]=NULL;
-        Temp->Next[CurrLevel]=NewNode;
+    if(Temp->Next[0] == NULL && Temp->Id < Key){ // The new node becomes the last node.
+        NewNode->Next[0]=NULL;
+        Temp->Next[0]=NewNode;
     }
     else if (Temp->Id > Key){        
-        Previous->Next[CurrLevel]=NewNode;
-        NewNode->Next[CurrLevel]=Temp;
+        Previous->Next[0]=NewNode;
+        NewNode->Next[0]=Temp;
     }
     return;
 }

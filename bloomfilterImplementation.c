@@ -16,17 +16,17 @@ void bloomSetBit(bloom * bloom, char * Id)
     int Byte=num1/8, x=1;
     int N=num1 - 8*Byte;
     int Number=bloom->bits[Byte];
-    Number ^= (-x ^ Number) & (1UL << N);
+    Number ^= (-x ^ Number) & (1UL << N); // Change of the Nth bit
     bloom->bits[Byte]=Number;
     
     /*Set the bit that sdbm returned*/
     Byte=num2/8; N=num2 - 8*Byte; Number=bloom->bits[Byte];
-    Number ^= (-x ^ Number) & (1UL << N);
+    Number ^= (-x ^ Number) & (1UL << N); // Change of the Nth bit
     bloom->bits[Byte]=Number;
     
     /*Set the bit that hash_i returned*/
     Byte=num3/8; N=num3 - 8*Byte; Number=bloom->bits[Byte];
-    Number ^= (-x ^ Number) & (1UL << N);
+    Number ^= (-x ^ Number) & (1UL << N); // Change of the Nth bit
     bloom->bits[Byte]=Number;
     return;
 }
@@ -38,14 +38,14 @@ int bloomBitExist(bloom * bloom, char * Id)
     int Byte=num1/8;
     int N=num1 - 8*Byte;
     int Number=bloom->bits[Byte];
-    int bit1=(Number >> N) & 1U;
+    int bit1=(Number >> N) & 1U; // Save of the Nth bit
     
     Byte=num2/8; N=num2 - 8*Byte; Number=bloom->bits[Byte];
-    int bit2=(Number >> N) & 1U;
+    int bit2=(Number >> N) & 1U; // Save of the Nth bit
     
     Byte=num3/8; N=num3 - 8*Byte; Number=bloom->bits[Byte];
     int bit3=(Number >> N) & 1U;
-    return (bit1 && bit2 && bit3);
+    return (bit1 && bit2 && bit3); // Save of the Nth bit
 }
 
 void bloomDestroy(bloom * bloom)

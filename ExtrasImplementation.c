@@ -5,8 +5,8 @@ Virus * VirusInit()
     Virus * VList=(Virus *)calloc(1, sizeof(Virus));
     char * Vname=(char *)calloc(2, sizeof(char));
     VList->VirusName=Vname;
-    VList->vaccinated_persons=SLInit(0);
-    VList->not_vaccinated_persons=SLInit(0);
+    VList->vaccinated_persons=SLInit();
+    VList->not_vaccinated_persons=SLInit();
     strcpy(VList->VirusName,NULLstring); VList->Next=NULL;
     return VList;
 }
@@ -15,61 +15,64 @@ void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated
 {
     Virus * Temp=*VList;
     int Id=atoi(CitizenId);
-    while (Temp->Next != NULL && strcmp(Temp->VirusName, VName)){
+    while (Temp->Next != NULL && strcmp(Temp->VirusName, VName)){ // Traverse the virus list
         Temp=Temp->Next;
     }
-    if (Temp->Next == NULL && strcmp(Temp->VirusName, VName)){
+    if (Temp->Next == NULL && strcmp(Temp->VirusName, VName)){ // If the virus node that we want doesn't exist (Reached last node).
         Virus *  NewNode=(Virus *)calloc(1, sizeof(Virus));
         NewNode->VirusName=(char *)calloc(strlen(VName)+1, sizeof(char)); strcpy(NewNode->VirusName, VName);
+
+        // Initialize everything that has to be initialized.
+        SkipList * slist=SLInit();
+        LinkedList * List=slist->Header;
+        LLInsert(List, Id);
+        bloom filter=bloomInit(BloomNum);
+        NewNode->filter=filter;
+        
+        // If citizen has been vaccinated, insert him/her to bloom filter and vaccinated_persons skiplist. Otherwise, insert him/her to not_vaccinated_persons skiplist.
         if (Vaccinated){
-            SkipList * slist=SLInit(0);
-            LinkedList * List=slist->Header;
-            LLInsert(List, Id, 0);
             NewNode->vaccinated_persons=slist;
-            bloom filter=bloomInit(BloomNum);
             bloomSetBit(&filter, CitizenId);
-            NewNode->filter=filter;
         }
         else{
-            SkipList * slist=SLInit(0);
-            LinkedList * List=slist->Header;
-            LLInsert(List, Id, 0);
             NewNode->not_vaccinated_persons=slist;
         }
         Temp->Next=NewNode;
     }
-    else if ( !strcmp(Temp->VirusName, VName) ){
-        if (Vaccinated){
+    else if ( !strcmp(Temp->VirusName, VName) ){ // If the virus node that we want exist.
+
+        if (Vaccinated){ // If the persons that was inserted, is vaccinated
             SkipList * slist=Temp->vaccinated_persons;
-            if (slist == NULL){
-                slist=SLInit(0);
+            
+            // Insert the citizen to the bloom filter.
+            bloom filter=Temp->filter;
+            bloomSetBit(&filter, CitizenId);
+            Temp->filter=filter;
+
+            if (slist == NULL){ // If there wasn't any vaccinated person for the virus, initialize the vaccinated_persons skiplist and insert to it.
+                slist=SLInit();
                 LinkedList * List=slist->Header;
-                LLInsert(List, Id, 0);
+                LLInsert(List, Id);
                 Temp->vaccinated_persons=slist;
-                bloom filter=bloomInit(BloomNum);
-                bloomSetBit(&filter, CitizenId);
-                Temp->filter=filter;
             }
-            else{
+            else{ // Otherwise, just insert to vaccinated_persons skiplist.
                 LinkedList * List=slist->Header;
-                LLInsert(List, Id, 0);
+                LLInsert(List, Id);
                 Temp->vaccinated_persons=slist;
-                bloom filter=Temp->filter;
-                bloomSetBit(&filter, CitizenId);
-                Temp->filter=filter;
             }
         }
-        else{
+        else{ // If the persons that was inserted, hasn't been vaccinated.
             SkipList * slist=Temp->not_vaccinated_persons;
-            if (slist == NULL){
-                slist=SLInit(0);
+            
+            if (slist == NULL){ // If there wasn't any not vaccinated person for the virus, initialize the not_vaccinated_persons skiplist and insert to it.
+                slist=SLInit();
                 LinkedList * List=slist->Header;
-                LLInsert(List, Id, 0);
+                LLInsert(List, Id);
                 Temp->not_vaccinated_persons=slist;
             }
-            else{
+            else{ // Otherwise, just insert to not_vaccinated_persons skiplist.
                 LinkedList * List=slist->Header;
-                LLInsert(List, Id, 0);
+                LLInsert(List, Id);
                 Temp->not_vaccinated_persons=slist;
             }
         }
@@ -95,8 +98,10 @@ void VirusSkipList(Virus ** VList)
 Virus * VirusFind(Virus * Vlist, char * VirusName)
 {
     Virus * Temp= Vlist;
-    while (Temp != NULL && strcmp(Temp->VirusName, VirusName))
-    {
+    while (Temp != NULL){
+        if (!strcmp(Temp->VirusName, VirusName)){
+            return Temp;
+        }
         Temp=Temp->Next;
     }
     return Temp;
@@ -104,8 +109,8 @@ Virus * VirusFind(Virus * Vlist, char * VirusName)
 
 void VirusDestroy(Virus ** VList)
 {
-    Virus * Current=(*VList)/*->Next*/, *Next;
-    while (Current!= NULL){
+    Virus * Current=(*VList), *Next;
+    while (Current!= NULL){ 
         Next=Current->Next;
         free(Current->VirusName); 
         SLDestroy(&(Current->vaccinated_persons)); 
@@ -136,21 +141,19 @@ Country * CountrySearch(Country * CList, char * Name)
 void CountryInsert(Country ** CList, char * CName)
 {
     Country * Temp=*CList;
-    while (Temp->Next != NULL && strcmp(Temp->CName, CName)){
+    while (Temp->Next != NULL && strcmp(Temp->CName, CName)){ 
         Temp=Temp->Next;
     }
     if (Temp->Next == NULL && strcmp(Temp->CName, CName)){
-        // Temp=Temp->Next;
         Country * NewNode=(Country *)calloc(1, sizeof(Country));
         NewNode->CName=(char *)calloc(20, sizeof(char)); 
-        strcpy(NewNode->CName, CName); NewNode->Population=1; NewNode->Next=NULL;
+        strcpy(NewNode->CName, CName); NewNode->Next=NULL;
         Temp->Next=NewNode;
         return;
     }
     else if (!strcmp(Temp->CName, NULLstring)){
         strcpy(Temp->CName, CName);
     }
-    Temp->Population += 1;
     return;
 }
 

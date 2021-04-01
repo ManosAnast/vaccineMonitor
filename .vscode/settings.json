@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "hash.h": "c",
+        "bloomfilter.h": "c",
+        "stdio.h": "c",
+        "stdbool.h": "c"
+    }
+}
