@@ -136,7 +136,7 @@ void VaccinateNow(Virus * Vlist, Country * CList, char ** Array)
             Rec->Vaccinated=true; Rec->Timing=CreateDate("Today");
         }
         else{
-            printf("Citizen with %s ID doesn't exist\n", Array[1]);
+            HTInsert(atoi(Array[1]), Array[2], Array[3], Array[4], atoi(Array[5]), Array[6], true, "Today");
         }
     }
     return;

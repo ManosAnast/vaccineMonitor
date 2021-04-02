@@ -9,35 +9,33 @@ if (( $total<$Check ))
     exit
 fi
 
-#test if the files are correct
-# e1=(-e $1)
-# e2=(-e $2)
-# echo $e1 $e2
-# if (( $e1=="true" & $e2=="true" )) 
-#     then
-#     if  (( -f $1 & -f $2 ))
-#         then
-#         echo Correct files
-#     else
-#         echo Wrong file
-#         exit
-#     fi
-# else
-#     echo Wrong file
-#     exit
-# fi
-
 lines=$3  #number of lines that the file will have
 duplicate=$4 #duplicateallowed flag
 
+if [[ ( $lines > 10000) && ($duplicate == 0) ]] # Check if numLines are within the limit for the ids.
+    then
+    echo With duplication disabled, there can be 10000 Ids. If you want to proceed duplication must be enabled.
+    read -p "If you want to proceed press yes: " yes
+    if [[ ("$yes"=="yes") ]] # If user seems to want to continue, enable duplication and make idNum=9999.
+        then
+        idNum=10000
+        duplicate=1
+    else
+        exit
+    fi
+else
+    idNum=$lines
+fi
+
 # Name of file that the script is writing to
 input=inputFile.txt
-
 
 virus=($(cat "$1")) # Array with viruses names
 countries=($(cat "$2")) # Array with countries
 viruslength=$[${#virus[@]}-1] # Length of virus array
 countrieslength=$[${#countries[@]}-1] # Length of countries array
+
+id=($(shuf -i 0-$idNum -n $lines)) # Array with rundom id's that are going to be used.
 
 # Empty the new file from the previous things that it contained and insert the first entry
 if [ $(( $RANDOM % 2 )) == 1 ]
@@ -48,8 +46,6 @@ else
     vac="NO"
     Date=""
 fi 
-# id=$(( $RANDOM % $lines ))
-id=($(shuf -i 0-$lines -n $lines))
 var="${id[0]} name${id[0]} surname${id[0]} ${countries[$(( $RANDOM % $countrieslength ))]} $(( $RANDOM % 120 + 1 )) ${virus[$(( $RANDOM % $viruslength ))]} $vac $Date"
 echo $var > $input
 
@@ -79,5 +75,5 @@ do
 
 done
 
-# make
-# ./vaccineMonitor -c inputFile.txt -b 100000
+make
+valgrind ./vaccineMonitor -c inputFile.txt -b 100000
