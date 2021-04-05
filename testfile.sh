@@ -18,13 +18,17 @@ if [[ ( $lines > 10000) && ($duplicate == 0) ]] # Check if numLines are within t
     read -p "If you want to proceed press yes: " yes
     if [[ ("$yes"=="yes") ]] # If user seems to want to continue, enable duplication and make idNum=9999.
         then
-        idNum=10000
+        idNum=9999
         duplicate=1
     else
         exit
     fi
+elif [[ ( $lines == 10000) && ($duplicate == 0) ]]
+    then
+    idNum=9999
+    lines=9999
 else
-    idNum=$lines
+    idNum=$[$lines]
 fi
 
 # Name of file that the script is writing to
@@ -76,4 +80,4 @@ do
 done
 
 make
-valgrind ./vaccineMonitor -c inputFile.txt -b 100000
+./vaccineMonitor -c inputFile.txt -b 100000
