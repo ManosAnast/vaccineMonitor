@@ -1,48 +1,118 @@
-Date:
-Το Date είναι μια δομή η οποία έχει 3 ακέραιους. Έναν για την μέρα, έναν για τον μήνα και έναν για το έτος. Του αντιστοιχούν 3 συναρτήσεις. Μια create, όπου δημιουργεί μια μεταβλητή τύπου Date *, μια print, η οποία εκτυπώνει την ημερομηνία και μια check, η οποία συγκρίνει τις 2 ημερομηνίες που της δίνουμε.
+# Goal:
+ vaccineMonitor is a program that keeps a record for every citizen and the vaccinations that the have done.
 
-Citizens:
-Το Citizens είναι η δομή στην οποία κρατάμε όλες τις εγγραφές και είναι τύπου hash table. Διάλεξα hash, γιατί μπορούμε να βρούμε τα στοιχεία που θέλουμε γρήγορα και για την linked list αρκεί να κρατάμε ένα id μόνο, όχι και pointer. Μπορεί για λίγες εγγραφές να μην κάνει ιδιαίτερη διαφορά απο άποψη εξοικονόμησης χώρου αλλά, για πολλές εγγραφές κάνει διαφορά. Έτσι, κατέληξα στο hash table με separate chaining. Αυτό το hash table έχει όλες τις πληροφορίες που μας δίνεται απο το αρχείο για κάθε citizen και για την υλοποίηση του έχουμε μια global μεταβλητή την Table. Ο λόγος για τον οποίο έχω βάλει global μεταβλητή είναι, γιατί πολλές μεταβλητές απο πολλά διαφορετικά αρχεία το χρησιμοποιούν κάτι το οποίο θα έκανε τον κώδικα ακόμα πιο δυανάγνωστο.
+# Program call:
+  
+First compile the code with:
+    
+    make
 
-LinkedList:
-Η LinkedList είναι μια συνδεδεμένη λίστα η οποία, κρατάει ένα το Id κάθε citizen αφού, οι ολοκληρωμένες εγγραφές κρατούντε σε hash table. Δηλαδή, μέσω του Id μπορούμε να βρούμε την αρχική εγγραφή. Επίσης, αυτό το linkedlist χρησιμοποιείται απο την skiplist για το μηδενικό επίπεδο. Για αυτό τον λόγο, ο πρώτος κόμβος(head) μέχρι να γίνει η υλοποίηση του skiplist κρατάει έναν αρνητικό αριθμό, ο οποίος με κάθε εισαγωγή γίνεται -1, έτσι ώστε να μπορούμε να βρούμε το μέγιστο πλήθος εισαγωγών με έναν πολλαπλασιασμό *-1. Αυτό το κάνω για να έχει το κάθε skiplist το δικό του μέγιστο αριθμό επιπέδων. Επίσης, η άλλη ιδαιτερότητα της είναι ότι, για να καταφέρω την υλοποίηση του skiplist έχω κάνει το next με διπλό pointer. Δηλαδή, έχουμε έναν πίνακα απο next. Κάθε επίπεδο του πίνακα, αντιστοιχεί στο αντίστοιχο επίπεδο του skiplist.
+  Then, the program is called with this format:
+    
+    ./vaccineMonitor -c citizenRecordsFile –b bloomSize
 
-skiplist.h:
-Η skiplist είναι μια δομή, η οποία έχει ένα pointer στο linkedlist που αναφέρω πιο πάνω και έναν ακέραιο ο οποίος κρατάει τον μέγιστο αριθμό των επιπέδον κάθε skiplist. Η υλοποίηση των παραπάνω επιπέδων γίνεται απο την insert της skip list.
+    – citizenRecordsFile is the file that has the citizens.
 
-Bloom Filter: 
-Για την υλοποίηση του BloomFilter, έχω βασιστεί στην συμβολή που δώσατε σε ένα παιδί στο piazza. Δηλαδή, έχω κάνε ένα string, αφού το char είναι ενός byte. Έτσι μπορούμε να βάζουμε τον ακριβή αριθμό απο bytes που μας ζητείται. Αυτό είναι το bits της δομής. Μετά, το NumOfBytes, όπως υποδηλώνει και το όνομα του, κρατάει τον αριθμό απο bytes που μας έχει δοθεί κατα την κλήση του προγράμματος. Εφόσον για τα bloom filter είμαστε σίγουροι για την άρνηση τους και αφού θέλουμε να παίρνουμε αν κάποιος δεν έχει εμβολιαστεί, τότε θα κάνουμε εισαγωγή τα άτομα που έχουν εμβολιαστεί.
+    – bloomSize is the number of bytes that the bloom filter will have ,
 
-Virus:
-Η δομή Virus είναι για την υλοποίηση των ιών. Δηλαδή, είναι μια λίστα όπου κάθε κόμβος της, αντιπροσωπεύει έναν ιο. Έχει το όνομα του ιού, τα 2 skiplist που του αντιστοιχούν και ένα bloom filter.
+File format:
+  ID FirstName LastName Country Age Virus vaccinationStatus(YES/NO) Date(If vaccinationStatus is YES)
 
-Country:
-Η δομή Country είναι για την υλοποίηση των χωρών. Δηλαδή, είναι μια λίστα όπου κάθε κόμβος της, αντιπροσωπεύει μία χώρα και έχει το όνομα της χώρας. Ο λόγος για τον οποίο το υλοποίησα αυτό είναι γιατί για να βρώ τα στοιχεία για κάθε χώρα, για τα populationStatus και popStatusByAge, θα ήταν πολύ χρονοβόρο και μπορεί να έμεναν κάποιες χώρες εκτός. Επομένως, έτσι κρατάω για γρήγορη προσπέλαση των χωρών.
+Script:
 
+  Call format:
+    
+    ./testFile.sh virusesFile countriesFile numLines duplicatesAllowed
+    
+    - virusesFile: file that contains the names of the viruses
+    
+    - countriesFile: file that contains the names of the countries
+    
+    - numLines: number of lines that the file will have
+    
+    - duplicatesAllowed: if it is 0, there won't be any duplicates. Otherwise, the duplication is allowed.
 
-Interface.c:
-Το αρχείο αυτό έχει συναρτήσεις οι οποίες υλοποιούν, καλώντας άλλες συναρτήσεις, το πρόγραμμα μας. Η Start το ξεκινάει, η TTY κάνει το interface που μας δίνει για να μπορούμε να επικοινωνούμε και η Destroy ελευθερώνει όλη την μνήμη στο τέλος του προγραμμάτος.
+#Commands:
 
+● /vaccineStatusBloom citizenID virusName
+H εφαρμογή θα ελέγχει το bloom filter που σχετίζεται με virusName και θα τυπώνει μήνυμα για το αν ο
+πολίτης με αριθμό ταυτότητας citizenID έχει κάνει το εμβόλιο κατά του virusName. (Δείτε παρακάτω
+αναλυτικά τις δομές που θα πρέπει να κρατάτε).
+Output format:
+ NOT VACCINATED OR
+ MAYBE
+ 
+● /vaccineStatus citizenID virusName
+H εφαρμογή θα ελέγχει τη skip list που σχετίζεται με virusName και θα τυπώνει μήνυμα για το αν ο πολίτης
+με αριθμό ταυτότητας citizenID έχει κάνει το εμβόλιο κατά του virusName.
+Output format:
+ NOT VACCINATED OR
+ VACCINATED ON 27-12-2020
 
-Commands.c:
-Το αρχείο αυτό έχει τις συναρτήσεις που υλοποιούν τα commands που μας ζητούνται απο την εκφώνηση και κάποιες βοηθητικές συναρτήσεις που χρησιμοποιούνται για την υλοποίηση των commands. Κάθε συνάρτηση υλοποιεί το αντίστοιχο command, εκτό της PopulationStatus που υλοποιεί και το "popStatusByAge" command. 
+● /vaccineStatus citizenID
+H εφαρμογή θα ελέγχει όλες τις skip lists (μία για κάθε ίωση), θα εντοπίζει όλες τις εγγραφές του πολίτη με
+αριθμό ταυτότητας citizenID, και θα τυπώνει για κάθε ίωση αν έχει εμβολιαστεί και την ημερομηνία
+εμβολιασμού.
+Output format: μια γραμμή για κάθε ίωση. Παράδειγμα:
+COVID-19 YES 27-12-2020
+SARS-1 NO
+H1N1 YES 11-11-2020
 
+● /populationStatus [country] virusName date1 date2
+Αν δεν δοθεί country όρισμα, η εφαρμογή θα τυπώνει για την ασθένεια virusName τον αριθμό πολιτών
+σε κάθε χώρα που έχουν εμβολιαστεί μέσα στο διάστημα [date1...date2] και το ποσοστό του πληθυσμού
+της χώρας που έχει εμβολιαστεί. Αν δοθεί country όρισμα, η εφαρμογή θα τυπώνει για την ασθένεια
+virusName, τον αριθμό πολίτων που έχουν εμβολιαστεί και το ποσοστό του πληθυσμού της χώρας που έχει
+εμβολιαστεί μέσα στο διάστημα [date1...date2]. Εάν υπάρχει ο ορισμός για date1 θα πρέπει να
+υπάρχει και ορισμός για date2, αλλιώς, θα τυπώνεται το μήνυμα λάθους ERROR στον χρήστη.
+ Output format: μια γραμμή για κάθε χώρα. Παράδειγμα όπου δεν έχει δοθεί country όρισμα: 
+GREECE 523415 5.02%
+USA 358000000 10.8%
+ISRAEL 3289103 38.0%
 
-ExtraImplementation.c:
-Στο αρχείο αυτό υλοποιούνται οι συναρτήσεις των επιπλέων δομών που έχω κάνει. Δηλαδή, του Country και του Virus. 
+● /popStatusByAge [country] virusName date1 date2
+Αν δεν δοθεί country όρισμα, η εφαρμογή θα τυπώνει για την ασθένεια virusName τον αριθμό
+εμβολιασμών ανά ηλικιακή κατηγορία σε κάθε χώρα και το ποσοστό του πληθυσμού της ηλικιακής κατηγορίας
+που έχει εμβολιαστεί μέσα στο διάστημα [date1...date2]. Αν δοθεί country όρισμα, η εφαρμογή θα
+τυπώνει για την ασθένεια virusName, τον αριθμό εμβολιασμών ανά ηλικιακή κατηγορία και το ποσοστό
+του πληθυσμού της ηλικιακής κατηγορίας που έχει εμβολιαστεί μέσα στο διάστημα [date1...date2] στη
+χώρα country. Εάν υπάρχει ο ορισμός για date1 θα πρέπει να υπάρχει και ορισμός για date2, αλλιώς,
+θα τυπώνεται το μήνυμα λάθους ERROR στον χρήστη.
+Output format: Παράδειγμα όπου δεν έχει δοθεί country όρισμα:
+GREECE
+0-20 0 0%
+20-40 18795 0.36%
+40-60 64650 1.24%
+60+ 439970 8.44%
+ISRAEL
+0-20 0 15%
+20-40 18795 23%
+40-60 64650 32.24%
+60+ 4399070 90.44%
 
+● /insertCitizenRecord citizenID firstName lastName country age virusName YES/NO
+[date]
+H εφαρμογή θα εισάγει στο bloom filter και στη κατάλληλη skip list που σχετίζεται με την ίωση virusName
+μια νέα εγγραφή με τα στοιχεία της. Μόνο το YES συνοδεύεται από ένα date. Αν ο πολίτης με αριθμό
+ταυτότητας citizenID έχει ήδη εμβολιαστεί κατά του ιού virusName η εφαρμογή επιστρέφει:
+ERROR: CITIZEN 889 ALREADY VACCINATED ON 27-12-2020
 
-bloomfilterImplementation.c:
-Στο αρχείο αυτό υλοποιούνται οι συναρτήσεις του bloom filter.
+● /vaccinateNow citizenID firstName lastName country age virusName
+Η εφαρμογή ελέγχει αν ο πολίτης με αριθμό ταυτότητας citizenID έχει ήδη εμβολιαστεί κατά του ιού
+virusName και αν ναι, επιστρέφει:
+ERROR: CITIZEN 889 ALREADY VACCINATED ON 27-12-2020.
+Αν δεν έχει εμβολιαστεί, η εφαρμογή εισάγει στο bloom filter και στη κατάλληλη skip list που σχετίζεται με
+την ίωση virusName την εγγραφή:
+citizenID firstName lastName country age virusName YES todays_date όπου todays_date
+είναι η σημερινή ημερομηνία.
 
+● /list-nonVaccinated-Persons virusName
+H εφαρμογή θα προσπελάζει την κατάλληλη skip list που σχετίζεται με την ίωση virusName και θα τυπώνει
+όλους τους πολίτες που δεν έχουν εμβολιαστεί κατά της virusName. Συγκεκριμένα, θα τυπώνει
+citizenID, firstName, lastName, country και age.
+Output format: μια γραμμή για κάθε πολίτη. Παράδειγμα:
+125 Jon Dupont USA 76
+889 John Papadopoulos GREECE 52 
 
-LinkedList.c:
-Στο αρχείο αυτό υλοποιούνται οι συναρτήσεις του LinkedList.
-
-
-HashImplementation.c:
-Στο αρχείο αυτό υλοποιούνται οι συναρτήσεις του HashImplementation.
-
-
-SkiplistImplementation.c:
-Στο αρχείο αυτό υλοποιούνται οι συναρτήσεις του SkiplistImplementation.
+● /exit
+Έξοδος από την εφαρμογή. Βεβαιωθείτε πως ελευθερώνετε σωστά όλη τη δεσμευμένη μνήμη.
