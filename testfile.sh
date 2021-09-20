@@ -36,8 +36,8 @@ input=inputFile.txt
 
 virus=($(cat "$1")) # Array with viruses names
 countries=($(cat "$2")) # Array with countries
-viruslength=$[${#virus[@]}-1] # Length of virus array
-countrieslength=$[${#countries[@]}-1] # Length of countries array
+viruslength=$[${#virus[@]}] # Length of virus array
+countrieslength=$[${#countries[@]}] # Length of countries array
 
 id=($(shuf -i 0-$idNum -n $lines)) # Array with rundom id's that are going to be used.
 
