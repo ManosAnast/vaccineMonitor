@@ -36,19 +36,19 @@ Script:
 
     ● /vaccineStatusBloom citizenID virusName
     
-    Check if the citizen that with the given citizenID is vaccinated for the virusName.(Use of bloom filter)
-    
-    Output format:
-     NOT VACCINATED *OR*
-     MAYBE
+  Check if the citizen that with the given citizenID is vaccinated for the virusName.(Use of bloom filter)
+
+  Output format:
+   NOT VACCINATED *OR*
+   MAYBE
 
     ● /vaccineStatus citizenID virusName
     
-    Check if the citizen that with the given citizenID is vaccinated for the virusName. If the citizen is vaccinated, print the date of the vaccination.(Use of Skip List)
-    
-    Output format:
-     NOT VACCINATED OR
-     VACCINATED ON 27-12-2020
+  Check if the citizen that with the given citizenID is vaccinated for the virusName. If the citizen is vaccinated, print the date of the vaccination.(Use of Skip List)
+
+  Output format:
+   NOT VACCINATED OR
+   VACCINATED ON 27-12-2020
 
     ● /vaccineStatus citizenID
     
@@ -91,11 +91,13 @@ Script:
     ● /insertCitizenRecord citizenID firstName lastName country age virusName YES/NO [date]
 
   The app insert a new citizen with this informations. In case of an error, it returns:
+  
   ERROR: CITIZEN 889 ALREADY VACCINATED ON 27-12-2020
 
     ● /vaccinateNow citizenID firstName lastName country age virusName
   
   Change the status of a non vaccinated person to vaccinated. If the citizen has been already vaccinated, it returns:
+  
   ERROR: CITIZEN 889 ALREADY VACCINATED ON 27-12-2020.
 
     ● /list-nonVaccinated-Persons virusName
