@@ -1,5 +1,6 @@
 # Goal:
  vaccineMonitor is a program that keeps a record for every citizen and the vaccinations that the have done.
+ Linux terminal application
 
 # Program call:
   
@@ -36,7 +37,7 @@ Script:
 
     ● /vaccineStatusBloom citizenID virusName
     
-  Check if the citizen that with the given citizenID is vaccinated for the virusName.(Use of bloom filter)
+  Check if the citizen with the given citizenID is vaccinated for the virusName.(Use of bloom filter)
 
   Output format:
    NOT VACCINATED *OR*
